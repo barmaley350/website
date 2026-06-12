@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-router = APIRouter(prefix="/api/v1")
+router = APIRouter(prefix="/api/v1", tags=["Index"])
 
 
 # http://localhost:1338/fastapi/api/v1/projects

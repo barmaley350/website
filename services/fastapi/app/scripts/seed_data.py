@@ -57,7 +57,7 @@ def seed(
             date = fake.date_time_between(start_date="-1y", end_date="now")
             post = Post(
                 title=fake.text(100),
-                content=fake.text(),
+                content=fake.text(1000),
                 user_id=owner.id,
                 created_at=date,
             )
