@@ -7,14 +7,13 @@ from sqlalchemy import engine_from_config, pool
 
 import app.models  # noqa: F401
 from alembic import context
-from app.models.base import Base
+from app.db.db import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
 # Получаем URL из переменной окружения
-path_to_env_docker = Path.cwd() / ".env"
 path_to_env_local = Path.cwd().parent.parent / ".env"
 
 if path_to_env_local.exists():
