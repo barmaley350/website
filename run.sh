@@ -5,8 +5,8 @@ RED='\033[0;41m'      # Красный фон
 GREEN='\033[0;32m'    # Зелёный текст
 NC='\033[0m'          # Сброс цвета
 
-ROOT_DIR="./services/fastapi"
-RUFF_RULES=""
+FASTAPI_DIR="./services/fastapi"
+ROOT_DIR=$(pwd)
 
 # Проверка статуса выполнения команды
 check_command_run_status() {
@@ -26,7 +26,19 @@ check_command_run_status() {
 
     # exit 0    
 } 
+#
+apply_mirgations() {
+    clear
+    cd $FASTAPI_DIR 
+    uv run alembic upgrade head
+}
 
+make_mirgations() {
+    clear
+    read -p "Описание миграции (флаг -m): " description
+    cd $FASTAPI_DIR 
+    uv run alembic revision --autogenerate -m "${description}"
+}
 gen_compose_viz() {
     clear
     uv run cpv -m png -o ./files/docker -l -s docker-compose.yaml
@@ -34,21 +46,25 @@ gen_compose_viz() {
 # Функции для запуска ruff
 run_ruff_check() {
     clear
-    uv run ruff check $ROOT_DIR
+    cd $ROOT_DIR
+    uv run ruff check $FASTAPI_DIR
 }
 
 run_ruff_check_statistics() {
     clear
-    uv run ruff check --statistics $ROOT_DIR
+    cd $ROOT_DIR
+    uv run ruff check --statistics $FASTAPI_DIR
 }
 
 run_ruff_check_fix() {
     clear
-    uv run ruff check --fix $ROOT_DIR
+    cd $ROOT_DIR
+    uv run ruff check --fix $FASTAPI_DIR
 }
 
 git_push() {
     clear
+    cd $ROOT_DIR
     git push github main
     git push gitlab main
 }
@@ -57,8 +73,10 @@ options=(
     "(1) ruff check --statistics"
     "(2) ruff check"
     "(3) ruff check --fix"
-    "(5) git push github / gitlab"
-    "(6) Gen docker-compose.yaml compose-viz"
+    "(4) git push github / gitlab"
+    "(5) Gen docker-compose.yaml compose-viz"
+    "(6) Make migrations (alembic revision --autogenerate -m)"
+    "(7) Apply migrations (alembic upgrade head)"
     "(q) Выход"
 )
 
@@ -91,7 +109,9 @@ select_option() {
         2) run_ruff_check_fix;;
         3) git_push;;
         4) gen_compose_viz;;
-        5) echo "Выход"; exit 0;;
+        5) make_mirgations;;
+        6) apply_mirgations;;
+        7) echo "Выход"; exit 0;;
     esac
     echo "Нажмите любую клавишу для продолжения..."
     read -n 1
