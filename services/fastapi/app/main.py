@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-app = FastAPI()
+app = FastAPI(title="FastAPI", version="1.0.0", root_path="/backend")
 
 
 @app.get("/")
