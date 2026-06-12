@@ -1,0 +1,15 @@
+[project]
+name = "backend-fastapi"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard]>=0.1.0",
+]
+
+[dependency-groups]
+dev = [
+    "pylint>=4.0.5",
+    "ruff>=0.15.17",
+]

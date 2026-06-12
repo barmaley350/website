@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "services/fastapi"
+		}
+	],
+	"settings": {"python.terminal.activateEnvironment": true}
+}

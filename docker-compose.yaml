@@ -1,0 +1,112 @@
+volumes:
+  db-postgresql-data-volume:
+    name: ${POSTGRESQL_DB_VOLUME_NAME:-db-volume}
+  static-files-volume:
+    name: ${STATIC_VOLUME_NAME:-static-volume}
+  smtp4dev-volume:
+    name: ${SMTP4DEV_VOLUME_NAME:-smtp4dev-volume}
+
+networks:
+  internal-net:
+
+services:
+  # ----------------------------------------------------------------------------
+  # nginx proxy server
+  # ----------------------------------------------------------------------------
+  service.nginx:
+    build:
+      context: .
+      dockerfile: ./services/nginx/Dockerfile
+    ports:
+      - ${NGINX_PORT}:80 # <--- В .env файле измените NGINX_PORT на любой другой свободный порт. Например, 1340
+    depends_on:
+      - service.frontend
+      - service.jupyter
+    volumes:
+      - static-files-volume:/usr/share/nginx/html/static
+    restart: unless-stopped
+    networks:
+      - internal-net
+
+  # ----------------------------------------------------------------------------
+  # nuxt frontend
+  # ----------------------------------------------------------------------------
+  service.frontend:
+    build:
+      context: .
+      dockerfile: ./services/nuxtjs/Dockerfile
+    command: "npm run dev"
+    volumes:
+      - ./services/nuxtjs:/app
+    env_file:
+      - ./services/nuxtjs/.env
+    restart: unless-stopped
+    networks:
+      - internal-net
+
+  # ----------------------------------------------------------------------------
+  # fastapi backend
+  # ----------------------------------------------------------------------------
+  service.fastapi:
+    build:
+      context: .
+      dockerfile: ./services/fastapi/Dockerfile
+    expose:
+      - 8000
+    volumes:
+      - ./services/fastapi:/app
+    env_file:
+      - .env
+    depends_on:
+      - service.db_postgres
+    restart: unless-stopped
+    networks:
+      - internal-net
+    command: uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # ----------------------------------------------------------------------------
+  # database
+  # ----------------------------------------------------------------------------
+  service.db_postgres:
+    image: postgres
+    expose:
+      - 5432
+    volumes:
+      - db-postgresql-data-volume:/var/lib/postgresql/18/docker
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - internal-net
+
+  # ----------------------------------------------------------------------------
+  # adminer
+  # ----------------------------------------------------------------------------
+  service.adminer:
+    image: adminer
+    depends_on:
+      - service.db_postgres
+    expose:
+      - 8080
+    environment:
+      ADMINER_DEFAULT_SERVER:  service.db_postgres
+    restart: unless-stopped
+    networks:
+      - internal-net
+
+  # ----------------------------------------------------------------------------
+  # database
+  # ----------------------------------------------------------------------------
+  service.smtp4dev:
+    image: rnwood/smtp4dev:prerelease
+    expose:
+      - 80
+      - 110
+      - 25
+    environment:
+      - ServerOptions__BasePath=/smtp4dev
+    volumes:
+      - smtp4dev-volume:/smtp4dev
+    restart: unless-stopped
+    networks:
+      - internal-net      
