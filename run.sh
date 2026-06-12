@@ -27,8 +27,33 @@ check_command_run_status() {
     # exit 0    
 } 
 #
+seed_data() {
+    clear
+    cd $ROOT_DIR
+    cd $FASTAPI_DIR 
+    read -p "Введите параметры (--drop -u 10 -p 10000 -c 100) / --help для справки: " params
+    uv run python3 -m app.scripts.seed_data $params
+}
+
+uv_add() {
+    clear
+    cd $ROOT_DIR
+    cd $FASTAPI_DIR 
+    read -p "Название модуля: " module_name
+    uv run uv add $module_name
+}
+
+uv_remove() {
+    clear
+    cd $ROOT_DIR
+    cd $FASTAPI_DIR 
+    read -p "Название модуля: " module_name
+    uv run uv remove $module_name
+}
+
 apply_mirgations() {
     clear
+    cd $ROOT_DIR
     cd $FASTAPI_DIR 
     uv run alembic upgrade head
 }
@@ -36,11 +61,13 @@ apply_mirgations() {
 make_mirgations() {
     clear
     read -p "Описание миграции (флаг -m): " description
+    cd $ROOT_DIR
     cd $FASTAPI_DIR 
     uv run alembic revision --autogenerate -m "${description}"
 }
 gen_compose_viz() {
     clear
+    cd $ROOT_DIR
     uv run cpv -m png -o ./files/docker -l -s docker-compose.yaml
 }
 # Функции для запуска ruff
@@ -77,7 +104,10 @@ options=(
     "(5) Gen docker-compose.yaml compose-viz"
     "(6) Make migrations (alembic revision --autogenerate -m)"
     "(7) Apply migrations (alembic upgrade head)"
-    "(q) Выход"
+    "(8) uv add"
+    "(9) uv remove"
+    "(10) Сгенерировать данные"
+    # "(q) Выход"
 )
 
 # Изначально выбран первый пункт (индекс 0)
@@ -88,7 +118,7 @@ count=${#options[@]}
 # Функция отрисовки меню
 draw_menu() {
     clear
-    echo "Используйте стрелки ↑/↓ и Enter"
+    echo "Используйте стрелки ↑/↓ и Enter. q - для выхода."
     echo
     for i in "${!options[@]}"; do
         if [[ $i -eq $selected ]]; then
@@ -111,7 +141,10 @@ select_option() {
         4) gen_compose_viz;;
         5) make_mirgations;;
         6) apply_mirgations;;
-        7) echo "Выход"; exit 0;;
+        7) uv_add;;
+        8) uv_remove;;
+        9) seed_data;;
+        # 7) echo "Выход"; exit 0;;
     esac
     echo "Нажмите любую клавишу для продолжения..."
     read -n 1
