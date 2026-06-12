@@ -3,7 +3,8 @@ from sqlalchemy.orm import relationship
 
 from app.db.db import Base
 
-
+# TODO Добавить nullable=False к created_at
+# Сейчас такое настройки для только что бы работала генерация fake данных
 class Comment(Base):
     __tablename__ = "comments"
 
