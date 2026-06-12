@@ -29,7 +29,7 @@ check_command_run_status() {
 
 gen_compose_viz() {
     clear
-    uv run cpv -m png -o ./files/docker -s docker-compose.yaml
+    uv run cpv -m png -o ./files/docker -l -s docker-compose.yaml
 }
 # Функции для запуска ruff
 run_ruff_check() {
