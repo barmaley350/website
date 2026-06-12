@@ -15,6 +15,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "faker>=40.23.0",
     "pylint>=4.0.5",
     "ruff>=0.15.17",
 ]
