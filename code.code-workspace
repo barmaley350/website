@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "services/nuxtjs"
+		},
+		{
+			"path": "services/nginx"
 		}
 	],
 	"settings": {"python.terminal.activateEnvironment": true}

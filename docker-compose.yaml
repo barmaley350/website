@@ -19,9 +19,9 @@ services:
       dockerfile: ./services/nginx/Dockerfile
     ports:
       - ${NGINX_PORT}:80 # <--- В .env файле измените NGINX_PORT на любой другой свободный порт. Например, 1340
-    depends_on:
-      - service.frontend
-      - service.jupyter
+    # depends_on:
+    #   - service.frontend
+    #   - service.jupyter
     volumes:
       - static-files-volume:/usr/share/nginx/html/static
     restart: unless-stopped
@@ -39,15 +39,18 @@ services:
     volumes:
       - ./services/nuxtjs:/app
     env_file:
-      - ./services/nuxtjs/.env
+      - .env
     restart: unless-stopped
     networks:
       - internal-net
+    dns:
+      - 8.8.8.8   # Основной DNS от Google
+      - 8.8.4.4   # Резервный DNS от Google      
 
   # ----------------------------------------------------------------------------
   # fastapi backend
   # ----------------------------------------------------------------------------
-  service.fastapi:
+  service.backend:
     build:
       context: .
       dockerfile: ./services/fastapi/Dockerfile
