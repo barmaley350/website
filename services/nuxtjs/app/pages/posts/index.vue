@@ -30,7 +30,8 @@ const countFlats = computed(() => {
                                 #{{ item.id }}
                             </LayoutBadges>
                             <LayoutTitle class="text-xl grow font-bold">
-                                {{ item.title }}
+                                <NuxtLink class="navbar-brand hover:underline underline-offset-4"
+                                    :to="'/posts/' + item.id">{{ item.title }}</NuxtLink>
                             </LayoutTitle>
                             <LayoutBadges
                                 class="flex flex-row gap-1 items-center text-xl ml-3 dark:bg-gray-800 bg-gray-200 rounded-md">
@@ -60,7 +61,7 @@ const countFlats = computed(() => {
                             <div class="flex flex-row items-center text-xl">
                                 <Icon name="i-lucide:tags" />
                                 <LayoutBadges class="text-base ml-1 bg-gray-200 dark:bg-gray-700 rounded-sm">
-                                    
+
                                 </LayoutBadges>
                             </div>
                         </template>

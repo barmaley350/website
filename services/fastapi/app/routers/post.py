@@ -27,10 +27,7 @@ async def get_posts(
 ):
     offset = (page - 1) * limit
     total = db.scalar(select(func.count()).select_from(models.Post))
-    # result = db.execute(select(models.Post).offset(offset).limit(limit))
-    # posts = result.scalars().all()
 
-    # return {"count": total, "results": posts}
     subq = (
         select(models.Comment.post_id, func.count(models.Comment.id).label("cnt"))
         .group_by(models.Comment.post_id)
