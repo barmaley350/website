@@ -1,1 +1,1 @@
-from .post import PostCreate, PostResponse  # noqa: F401
+from .post import PostCreate, PostResponse, PaginatedResponse  # noqa: F401
