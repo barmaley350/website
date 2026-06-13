@@ -31,7 +31,7 @@ seed_data() {
     clear
     cd $ROOT_DIR
     cd $FASTAPI_DIR 
-    read -p "Введите параметры (--drop -u 10 -p 10000 -c 100) / --help для справки: " params
+    read -p "Введите параметры ( --drop -u 10 -p 100 -o 10000 -c 200) / --help для справки: " params
     uv run python3 -m app.scripts.seed_data $params
 }
 

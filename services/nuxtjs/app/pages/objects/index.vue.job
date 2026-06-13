@@ -1,7 +1,7 @@
 <script setup>
 const runtimeConfig = useRuntimeConfig()
 const paginationPageNumber = ref(1)
-let url = "baseURL" in runtimeConfig ? runtimeConfig.baseURL + 'posts' : window.location.origin + '/backend/api/v1/posts'
+let url = "baseURL" in runtimeConfig ? runtimeConfig.baseURL + 'objects' : window.location.origin + '/backend/api/v1/objects'
 const { data, status, error, pending } = useFetch(url, {
     query: {
         page: paginationPageNumber,
@@ -31,7 +31,7 @@ const countFlats = computed(() => {
                             </LayoutBadges>
                             <LayoutTitle class="text-xl grow font-bold">
                                 <NuxtLink class="navbar-brand hover:underline underline-offset-4"
-                                    :to="'/posts/' + item.id">{{ item.title }}</NuxtLink>
+                                    :to="'/objects/' + item.id">{{ item.title }}</NuxtLink>
                             </LayoutTitle>
                             <LayoutBadges
                                 class="flex flex-row gap-1 items-center text-xl ml-3 dark:bg-gray-800 bg-gray-200 rounded-md">
@@ -52,10 +52,25 @@ const countFlats = computed(() => {
                                 <LayoutBadges class="text-base ml-1 bg-gray-100 dark:bg-gray-700 rounded-sm">
                                     {{ item.email }}
                                 </LayoutBadges>
+                                <LayoutBadges class="text-base ml-1 bg-gray-100 dark:bg-gray-700 rounded-sm">
+                                    {{ item.phone }}
+                                </LayoutBadges>
+                                <LayoutBadges class="text-base ml-1 bg-gray-100 dark:bg-gray-700 rounded-sm">
+                                    {{ item.city }}
+                                </LayoutBadges>
+                                <LayoutBadges class="text-base ml-1 bg-gray-100 dark:bg-gray-700 rounded-sm">
+                                    {{ item.category }}
+                                </LayoutBadges>
+                                <LayoutBadges class="text-base ml-1 bg-gray-100 dark:bg-gray-700 rounded-sm">
+                                    {{ item.transaction }}
+                                </LayoutBadges>
+                                <LayoutBadges class="text-base ml-1 bg-gray-100 dark:bg-gray-700 rounded-sm">
+                                    {{ item.price }}
+                                </LayoutBadges>
                             </div>
                         </template>
                         <template #description>
-                            {{ item.content }}
+                            {{ item.description }}
                         </template>
                         <template #footer>
                             <div class="flex flex-row items-center text-xl">

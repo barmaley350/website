@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 
 from app.db.db import Base
 
+
 # TODO Добавить nullable=False к created_at
 # Сейчас такое настройки для только что бы работала генерация fake данных
 class Comment(Base):
@@ -11,8 +12,8 @@ class Comment(Base):
     id = Column(Integer, primary_key=True, index=True)
     content = Column(Text, nullable=False)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    post_id = Column(Integer, ForeignKey("posts.id"), nullable=False)
+    object_id = Column(Integer, ForeignKey("object.id"), nullable=False)
     created_at = Column(DateTime, nullable=True)
 
-    post = relationship("Post", backref="comments")
+    object = relationship("Object", backref="comments")
     user = relationship("User", backref="comments")

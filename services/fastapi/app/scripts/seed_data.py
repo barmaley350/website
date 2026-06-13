@@ -5,7 +5,7 @@ from faker import Faker
 from sqlalchemy.orm import Session
 
 from app.db.db import Base, SessionLocal, engine
-from app.models import Comment, Post, User
+from app.models import Category, City, Comment, Post, Transaction, User, Object
 
 app = typer.Typer()
 fake = Faker("ru_RU")
@@ -20,6 +20,7 @@ def seed(
     count_users: int = typer.Option(
         10, "--users", "-u", help="Количество пользователей"
     ),
+    count_obj: int = typer.Option(50, "--obj", "-o", help="Количество объектов"),
     count_posts: int = typer.Option(50, "--posts", "-p", help="Количество постов"),
     count_comments: int = typer.Option(
         50, "--comments", "-c", help="Количество коментариев"
@@ -35,18 +36,90 @@ def seed(
         Base.metadata.create_all(bind=engine)
 
     with SessionLocal() as session:
+        # Categories
+        categories_data = [
+            "Коммерческая недвижимость",
+            "Земельные участки",
+            "Готовый бизнес",
+            "Виллы",
+        ]
+        categories = [
+            Category(title=title, description=fake.text(100))
+            for title in categories_data
+        ]
+        session.add_all(categories)
+        session.commit()
+
+        # Transaction
+        transactions_data = [
+            "Продам",
+            "Сдам",
+        ]
+        transactions = [
+            Transaction(title=title, description=fake.text(100))
+            for title in transactions_data
+        ]
+        session.add_all(transactions)
+        session.commit()
+
+        # Transaction
+        cities_data = [
+            "Thalang",
+            "Вичит",
+            "Карон (Karon)",
+            "Кату (Kathu)",
+            "Ко Каев (Ko Kaeo)",
+            "Патонг (Patong)",
+            "Раваи (Rawai)",
+            "Талат Нуэа",
+            "Талат Яй",
+            "Тхаланг",
+            "Чалонг (Chalong)",
+        ]
+        cities = [
+            City(title=title, description=fake.text(100)) for title in cities_data
+        ]
+        session.add_all(cities)
+        session.commit()
+
         # Создаём пользователей
         users = []
         for i in range(count_users):
             user = User(
                 username=fake.name(),
                 email=fake.email(),
+                phone=fake.phone_number(),
                 is_active=True,
             )
             # session.add(user)
             users.append(user)
             process(i + 1, "User")
         session.add_all(users)
+        session.commit()  # чтобы получить id
+        print()
+
+        # Создаём объекты
+        objs = []
+
+        for i in range(count_obj):
+            date = fake.date_time_between(start_date="-1y", end_date="now")
+            obj = Object(
+                title=fake.text(100),
+                description=fake.text(1000),
+                price=random.randint(10000, 1000000),
+                is_active=True,
+                category_id=categories[random.randint(0, len(categories) - 1)].id,  # noqa: S311
+                city_id=cities[random.randint(0, len(cities) - 1)].id,  # noqa: S311
+                user_id=users[random.randint(0, len(users) - 1)].id,  # noqa: S311
+                transaction_id=transactions[
+                    random.randint(0, len(transactions) - 1)
+                ].id,  # noqa: S311
+                created_at=date,
+            )
+            # session.add(user)
+            objs.append(obj)
+            process(i + 1, "Object")
+        session.add_all(objs)
         session.commit()  # чтобы получить id
         print()
 
@@ -70,16 +143,14 @@ def seed(
 
         comments = []
         comments_count = 0
-        for post in random.sample(posts, len(posts) // 3):
+        for obj in random.sample(objs, len(objs) // 3):
             for _ in range(random.randint(1, count_comments)):  # noqa: S311
                 owner = users[random.randint(0, len(users) - 1)]  # noqa: S311
-                date = fake.date_time_between(
-                    start_date=post.created_at, end_date="now"
-                )
+                date = fake.date_time_between(start_date=obj.created_at, end_date="now")
                 comments.append({
                     "content": fake.text(100),
                     "user_id": owner.id,
-                    "post_id": post.id,
+                    "object_id": obj.id,
                     "created_at": date,
                 })
                 comments_count += 1

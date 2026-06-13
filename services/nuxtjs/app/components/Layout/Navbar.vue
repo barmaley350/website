@@ -7,8 +7,8 @@ const urls_left = {
         icon: "",
     },
     flats: {
-        url: "/posts",
-        label: "Посты",
+        url: "/objects",
+        label: "Объекты",
         icon: "i-lucide-book-open",
     },
     // about: {
@@ -71,7 +71,7 @@ function toggleDarkMode() {
             </div> -->
         </div>
         <div class="flex items-center space-x-3 font-normal">
-            <LayoutDropDownMenu></LayoutDropDownMenu>
+            <!-- <LayoutDropDownMenu></LayoutDropDownMenu> -->
             <div class="flex gap-x-2 px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-md items-center">
                 <Icon name="i-lucide:log-in" />
                 <NuxtLink class="navbar-brand" :to="urls_right['login']['url']">Вход</NuxtLink>
