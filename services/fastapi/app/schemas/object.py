@@ -16,7 +16,7 @@ class ObjectCreate(BaseModel):
     user_id: int
 
 
-class ObjectResponse1(BaseModel):
+class ObjectResponse(BaseModel):
     id: int
     title: str
     description: str
@@ -30,31 +30,12 @@ class ObjectResponse1(BaseModel):
 
 
 class ObjectResponseSingle(BaseModel):
-    object: ObjectResponse1
+    object: ObjectResponse
     user: user.UserResponse
     city: city.CityResponse
     category: category.CategoryResponse
     transaction: transaction.TransactionResponse
-
-    class Config:
-        from_attributes = True  # раньше orm_mode
-
-
-class ObjectResponse(BaseModel):
-    id: int
-    title: str
-    description: str
-    price: int
-    is_active: bool
-    category: str
-    city: str
-    transaction: str
-    user_id: int
-    created_at: str
-    username: str
-    email: str
-    phone: str
-    comments_count: int
+    comments_count: int | None = None
 
     class Config:
         from_attributes = True  # раньше orm_mode
@@ -62,4 +43,6 @@ class ObjectResponse(BaseModel):
 
 class PaginatedObject(BaseModel):
     count: int
-    results: list[ObjectResponse]
+    category_id: int | None = None
+    category_name: str | None = None
+    results: list[ObjectResponseSingle]

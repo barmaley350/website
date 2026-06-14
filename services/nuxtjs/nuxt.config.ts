@@ -8,8 +8,9 @@ export default defineNuxtConfig({
     fonts: false // Полностью отключает интеграцию с @nuxt/fonts
   },
   runtimeConfig: {
-    baseURL: 'http://service.backend:8000/backend/api/v1/',
+    apiInternal: 'http://service.backend:8000/backend/api/v1/',
     public: {
+      apiBase: '/backend/api/v1/' // для клиента
     },
   },  
   vite: {
@@ -20,4 +21,12 @@ export default defineNuxtConfig({
       ]
     }
   },
+  // nitro: {
+  //   devProxy: {
+  //     '/backend': {
+  //       target: 'http://service.backend:8000',
+  //       changeOrigin: true
+  //     }
+  //   }
+  // },  
 })

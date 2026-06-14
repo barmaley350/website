@@ -11,7 +11,7 @@ from app.schemas import StatResponse
 router = APIRouter(prefix="/api/v1", tags=["Stats"])
 
 
-@router.get("/stats", response_model=StatResponse)
+@router.get("/stats/", response_model=StatResponse)
 async def get_stats(
     db: Session = Depends(get_session),
 ):

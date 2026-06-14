@@ -23,7 +23,6 @@ if (props.breadcrumbsData && props.breadcrumbsData.length > 0) {
     // Иначе используем только локальный массив
     localData = [...localBreadcrumbsData];
 }
-
 </script>
 
 <template>

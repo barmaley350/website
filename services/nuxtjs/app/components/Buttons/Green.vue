@@ -8,7 +8,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <button class="bg-green-600 px-5 py-2 text-gray-100 rounded-sm" :class="class">
+    <button class="px-5 py-2 text-gray-100 rounded-sm text-2xl font-bold text-nowrap ml-5" :class="class">
         <slot />
     </button>
 </template>

@@ -1,19 +1,36 @@
+"""Object routers."""
+
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, FastAPI, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select
 from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy.orm import Session
 
-import app.models as models
+from app import models, schemas
 from app.db.db import get_session
-from app.schemas import ObjectResponse, ObjectResponseSingle, PaginatedObject
 
 router = APIRouter(prefix="/api/v1", tags=["Objects"])
 
 
-@router.get("/objects/{object_id}", response_model=ObjectResponseSingle)
-def get_object(object_id: int, db: Annotated[Session, Depends(get_session)]):
+@router.get("/objects/{object_id}", response_model=schemas.ObjectResponseSingle)
+def get_object(object_id: int, db: Annotated[Session, Depends(get_session)]) -> dict:
+    """Get object.
+
+    :param object_id: _description_
+    :type object_id: int
+    :param db: _description_
+    :type db: Annotated[Session, Depends
+    :raises HTTPException: _description_
+    :raises HTTPException: _description_
+    :return: _description_
+    :rtype: _type_
+    """
+    comments_count = db.execute(
+        select(func.count(models.Comment.id)).where(
+            models.Comment.object_id == object_id
+        )
+    ).scalar()
     stmt = (
         select(
             models.Object,
@@ -31,9 +48,9 @@ def get_object(object_id: int, db: Annotated[Session, Depends(get_session)]):
     try:
         row = db.execute(stmt).one()
     except NoResultFound:
-        raise HTTPException(404, "Object not found")
+        raise HTTPException(404, "Object not found") from None
     except MultipleResultsFound:
-        raise HTTPException(400, "Multiple objects found")
+        raise HTTPException(400, "Multiple objects found") from None
 
     obj, user, city, category, transaction = row
     return {
@@ -42,17 +59,45 @@ def get_object(object_id: int, db: Annotated[Session, Depends(get_session)]):
         "city": city,
         "category": category,
         "transaction": transaction,
+        "comments_count": comments_count or 0,
     }
 
 
-@router.get("/objects", response_model=PaginatedObject)
+@router.get("/objects/", response_model=schemas.PaginatedObject)
 async def get_objects(
-    page: int = Query(1, ge=1),  # noqa: FAST002
-    limit: int = Query(3, ge=1, le=100),  # noqa: FAST002
-    db: Session = Depends(get_session),
-):
+    db: Annotated[Session, Depends(get_session)],
+    page: Annotated[int, Query(ge=1)] = 1,
+    limit: Annotated[int, Query(ge=1, le=100)] = 3,
+    category_id: Annotated[
+        int | None, Query(description="ID категории (необязательный)")
+    ] = None,
+) -> dict:
+    """_summary_.
+
+    :param db: _description_
+    :type db: Annotated[Session, Depends
+    :param page: _description_, defaults to 1)]=1
+    :type page: Annotated[int, Query, optional
+    :param limit: _description_, defaults to 1, le=100)]=3
+    :type limit: Annotated[int, Query, optional
+    :param category_id: _description_, defaults to "ID категории (необязательный)") ]=None
+    :type category_id: Annotated[ int  |  None, Query, optional
+    :return: _description_
+    :rtype: dict
+    """
     offset = (page - 1) * limit
-    total = db.scalar(select(func.count()).select_from(models.Object))
+
+    stmt = select(func.count(models.Object.id))
+    if category_id is not None:
+        stmt = stmt.where(models.Object.category_id == category_id)
+    total = db.scalar(stmt)
+
+    category_name = None
+    if category_id is not None:
+        name_stmt = select(models.Category.title).where(
+            models.Category.id == category_id
+        )
+        category_name = db.scalar(name_stmt)
 
     subq = (
         select(models.Comment.object_id, func.count(models.Comment.id).label("cnt"))
@@ -77,27 +122,27 @@ async def get_objects(
         .offset(offset)
         .limit(limit)
     )
+    # Добавляем WHERE только если category_id передан
+    if category_id is not None:
+        stmt = stmt.where(models.Object.category_id == category_id)
 
     rows = db.execute(stmt).all()
 
     results = [
         {
-            "id": o.id,
-            "title": o.title,
-            "description": o.description,
-            "price": o.price,
-            "is_active": o.is_active,
-            "category": cat.title,
-            "city": city.title,
-            "transaction": tran.title,
-            "user_id": u.id,
-            "created_at": o.created_at.strftime("%Y-%m-%d %H:%M"),
-            "username": u.username,
-            "email": u.email,
-            "phone": u.phone,
+            "object": obj,
+            "user": user,
+            "city": city,
+            "category": category,
+            "transaction": transaction,
             "comments_count": cnt,
         }
-        for o, u, city, cat, tran, cnt in rows
+        for obj, user, city, category, transaction, cnt in rows
     ]
 
-    return {"count": total, "results": results}
+    return {
+        "count": total,
+        "results": results,
+        "category_name": category_name,
+        "category_id": category_id,
+    }

@@ -44,31 +44,7 @@ function toggleDarkMode() {
             <div class="flex items-center space-x-1 font-normal text-xl" v-for="url in urls_left">
                 <NuxtLink class="navbar-brand" :to="url['url']">{{ url['label'] }}</NuxtLink>
             </div>
-            <!-- <div class="flex items-center space-x-1 font-normal">
-                <a href="/admin/" target="_blank">Django Admin</a>
-                <Icon name="i-lucide:arrow-up-right" />
-            </div>
 
-            <div class="flex items-center space-x-1 font-normal">
-                <a href="/docs/index.html" target="_blank">Sphinx docs</a>
-                <Icon name="i-lucide:arrow-up-right" />
-            </div>
-            <div class="flex items-center space-x-1 font-normal">
-                <a href="/adminer/" target="_blank">Adminer</a>
-                <Icon name="i-lucide:arrow-up-right" />
-            </div>
-            <div class="flex items-center space-x-1 font-normal">
-                <a href="/api/" target="_blank">API DRF</a>
-                <Icon name="i-lucide:arrow-up-right" />
-            </div>
-            <div class="flex items-center space-x-1 font-normal">
-                <a href="/fastapi/" target="_blank">API FastAPI</a>
-                <Icon name="i-lucide:arrow-up-right" />
-            </div>
-            <div class="flex items-center space-x-1 font-normal">
-                <a href="/jupyter/" target="_blank">Jupyter</a>
-                <Icon name="i-lucide:arrow-up-right" />
-            </div> -->
         </div>
         <div class="flex items-center space-x-3 font-normal">
             <!-- <LayoutDropDownMenu></LayoutDropDownMenu> -->

@@ -1,3 +1,8 @@
-from .post import PostCreate, PostResponse, PaginatedResponse  # noqa: F401
-from .object import ObjectCreate, ObjectResponse, PaginatedObject, ObjectResponseSingle  # noqa: F401
+from .object import (  # noqa: F401
+    ObjectCreate,
+    ObjectResponse,
+    ObjectResponseSingle,
+    PaginatedObject,
+)
+from .post import PaginatedResponse, PostCreate, PostResponse  # noqa: F401
 from .stat import StatResponse  # noqa: F401

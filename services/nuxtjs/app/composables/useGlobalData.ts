@@ -1,9 +1,13 @@
 export function useStatData() {
     const runtimeConfig = useRuntimeConfig()
-    let url = "baseURL" in runtimeConfig ? runtimeConfig.baseURL + 'stats' : window.location.origin + '/backend/api/v1/stats'
-    const { data: statData, pending, error } = useFetch(url, {
-        server: true, // SSR
+    const apiUrl = import.meta.server
+    ? runtimeConfig.apiInternal      // на сервере — полный внутренний URL
+    : runtimeConfig.public.apiBase   // на клиенте — относительный путь
+
+    const { data: statData, pending, error } = useFetch(`${apiUrl}stats/`, {
+        // server: true, // SSR
         // client: true, // гидратация/клиент
+        key: 'stat-data',
     })
     return { statData, pending, error  }
 }
