@@ -19,33 +19,38 @@ function getRandomFlatNumber() {
     return Math.floor(Math.random() * 53) + 1
 }
 
+// const breadcrumbsData = [
+//     {
+//         url: "/test",
+//         label: "Объекты1",
+//         separator: true,
+//     },
+// ]
+
 </script>
 <template>
+
     <div class="flex flex-col gap-3">
+        <LayoutBreadcrumbs></LayoutBreadcrumbs>
         <div class="block my-3">
             <UPagination v-model:page="paginationPageNumber" :total="countFlats" />
         </div>
+
         <div class="grid grid-cols-12 gap-3">
             <div class="col-span-9">
                 <div class="flex flex-col gap-3" v-if="data">
                     <LayoutCard v-for="item in data.results" :key="item.id">
                         <template #title>
-                            <!-- <LayoutBadges
-                                class="flex text-xl mr-3 dark:bg-gray-800 bg-gray-200 rounded-md h-auto items-center">
-                                #{{ item.price }}
-                            </LayoutBadges> -->
                             <LayoutTitle class="text-xl grow font-bold">
                                 <NuxtLink class="navbar-brand hover:underline underline-offset-4"
                                     :to="'/objects/' + item.id">{{ item.title }}</NuxtLink>
+
                             </LayoutTitle>
                             <ButtonsGreen class="text-2xl font-bold text-nowrap ml-5">
                                 <Icon name="i-lucide:dollar-sign" /> {{ item.price }}
                             </ButtonsGreen>
-                            <!-- <LayoutBadges
-                                class="flex flex-row gap-1 items-center text-xl ml-3 dark:bg-gray-800 bg-gray-200 rounded-md">
-                                <Icon name="i-lucide:message-circle-more" /> {{ item.comments_count }}
-                            </LayoutBadges> -->
                         </template>
+
                         <template #description>
                             <div class="grid grid-cols-3 gap-3">
 
@@ -56,15 +61,35 @@ function getRandomFlatNumber() {
                                                 :src="`http://localhost:1338/img2/${getRandomFlatNumber()}.jpg`">
                                         </div>
                                     </div>
-                                    <!-- <LayoutCardImage>
-
-                                    </LayoutCardImage> -->
                                 </div>
-                                <div class="col-span-2">
-                                    {{ item.description.slice(0, 300) }}
-                                    <!-- <LayoutCardInfo :data="item">
+                                <div class="flex flex-col col-span-2 gap-5">
+                                    <div>{{ item.description.slice(0, 300) }}</div>
 
-                                    </LayoutCardInfo> -->
+                                    <div class="flex flex-row justify-end text-xl gap-x-3">
+                                        <div class="flex flex-row">
+                                            <Icon name="i-lucide:tags" />
+                                            <LayoutBadges
+                                                class="text-base ml-1 bg-gray-100 dark:bg-gray-700 rounded-sm">
+                                                {{ item.city }}
+                                            </LayoutBadges>
+                                        </div>
+                                        <div class="flex flex-row">
+                                            <Icon name="i-lucide:tags" />
+                                            <LayoutBadges
+                                                class="text-base ml-1 bg-gray-100 dark:bg-gray-700 rounded-sm">
+                                                {{ item.transaction }}
+                                            </LayoutBadges>
+                                        </div>
+                                        <div class="flex flex-row">
+                                            <Icon name="i-lucide:tags" />
+                                            <LayoutBadges
+                                                class="text-base ml-1 bg-gray-100 dark:bg-gray-700 rounded-sm">
+                                                {{ item.category }}
+                                            </LayoutBadges>
+                                        </div>
+                                    </div>
+
+
                                 </div>
                             </div>
                         </template>

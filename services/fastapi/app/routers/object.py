@@ -2,21 +2,47 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Query
 from sqlalchemy import func, select
+from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 from sqlalchemy.orm import Session
 
 import app.models as models
 from app.db.db import get_session
-from app.schemas import ObjectResponse, PaginatedObject
+from app.schemas import ObjectResponse, ObjectResponseSingle, PaginatedObject
 
 router = APIRouter(prefix="/api/v1", tags=["Objects"])
 
 
-@router.get("/objects/{object_id}", response_model=ObjectResponse)
-def get_object(post_id: int, db: Annotated[Session, Depends(get_session)]):
-    post = db.query(models.Object).filter(models.Object.id == post_id).first()
-    if not post:
-        raise HTTPException(status_code=404, detail="Object not found")
-    return post
+@router.get("/objects/{object_id}", response_model=ObjectResponseSingle)
+def get_object(object_id: int, db: Annotated[Session, Depends(get_session)]):
+    stmt = (
+        select(
+            models.Object,
+            models.User,
+            models.City,
+            models.Category,
+            models.Transaction,
+        )
+        .join(models.User, models.Object.user_id == models.User.id)
+        .join(models.City, models.Object.city_id == models.City.id)
+        .join(models.Category, models.Object.category_id == models.Category.id)
+        .join(models.Transaction, models.Object.transaction_id == models.Transaction.id)
+        .where(models.Object.id == object_id)
+    )
+    try:
+        row = db.execute(stmt).one()
+    except NoResultFound:
+        raise HTTPException(404, "Object not found")
+    except MultipleResultsFound:
+        raise HTTPException(400, "Multiple objects found")
+
+    obj, user, city, category, transaction = row
+    return {
+        "object": obj,
+        "user": user,
+        "city": city,
+        "category": category,
+        "transaction": transaction,
+    }
 
 
 @router.get("/objects", response_model=PaginatedObject)

@@ -13,7 +13,7 @@ const props = defineProps({
             <div v-if="$slots.image" class="border-b border-gray-300 dark:border-gray-600">
                 <slot name="image" />
             </div>            
-            <div class="flex flex-row p-2 bg-gray-200 rounded-t-sm dark:bg-gray-700">
+            <div class="flex flex-row p-2 bg-gray-100 rounded-t-sm dark:bg-gray-700">
                 <slot name="title" />
             </div>
             <div v-if="$slots.author" class="p-3 border-b border-gray-300 dark:border-gray-600">
