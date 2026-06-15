@@ -1,10 +1,10 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, FastAPI, HTTPException, Query
+from fastapi import APIRouter, Depends
 from sqlalchemy import desc, func, select
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-import app.models as models
+from app import models
 from app.db.db import get_session
 from app.schemas import StatResponse
 
@@ -13,7 +13,7 @@ router = APIRouter(prefix="/api/v1", tags=["Stats"])
 
 @router.get("/stats/", response_model=StatResponse)
 async def get_stats(
-    db: Session = Depends(get_session),
+    db: Annotated[AsyncSession, Depends(get_session)],
 ):
     stmt = (
         select(
@@ -26,7 +26,9 @@ async def get_stats(
         .limit(5)
     )
 
-    cities = db.execute(stmt).all()
+    result = await db.execute(stmt)
+    cities = result.all()
+
     cities_stats = [{"city": city.title, "count": city.object_count} for city in cities]
 
     #
@@ -43,7 +45,8 @@ async def get_stats(
         .limit(5)
     )
 
-    categories = db.execute(stmt).all()
+    result = await db.execute(stmt)
+    categories = result.all()
     categories_stats = [
         {"category": category.title, "count": category.object_count}
         for category in categories
@@ -63,7 +66,8 @@ async def get_stats(
         .limit(5)
     )
 
-    transactions = db.execute(stmt).all()
+    result = await db.execute(stmt)
+    transactions = result.all()
     transactions_stats = [
         {"transaction": transaction.title, "count": transaction.object_count}
         for transaction in transactions

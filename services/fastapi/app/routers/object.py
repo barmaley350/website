@@ -5,7 +5,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select
 from sqlalchemy.exc import MultipleResultsFound, NoResultFound
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import models, schemas
 from app.db.db import get_session
@@ -14,23 +14,20 @@ router = APIRouter(prefix="/api/v1", tags=["Objects"])
 
 
 @router.get("/objects/{object_id}", response_model=schemas.ObjectResponseSingle)
-def get_object(object_id: int, db: Annotated[Session, Depends(get_session)]) -> dict:
-    """Get object.
+async def get_object(
+    object_id: int, db: Annotated[AsyncSession, Depends(get_session)]
+) -> dict:
+    """Получить объект по его ID.
 
-    :param object_id: _description_
-    :type object_id: int
-    :param db: _description_
-    :type db: Annotated[Session, Depends
-    :raises HTTPException: _description_
-    :raises HTTPException: _description_
-    :return: _description_
-    :rtype: _type_
+    Возвращает полную информацию об объекте, включая связанные данные:
+    пользователя, город, категорию, транзакцию и количество комментариев.
     """
-    comments_count = db.execute(
-        select(func.count(models.Comment.id)).where(
-            models.Comment.object_id == object_id
-        )
-    ).scalar()
+    count_stmt = select(func.count(models.Comment.id)).where(
+        models.Comment.object_id == object_id
+    )
+    result = await db.execute(count_stmt)
+    comments_count = result.scalar() or 0
+
     stmt = (
         select(
             models.Object,
@@ -46,7 +43,8 @@ def get_object(object_id: int, db: Annotated[Session, Depends(get_session)]) -> 
         .where(models.Object.id == object_id)
     )
     try:
-        row = db.execute(stmt).one()
+        result = await db.execute(stmt)
+        row = result.one()
     except NoResultFound:
         raise HTTPException(404, "Object not found") from None
     except MultipleResultsFound:
@@ -65,39 +63,32 @@ def get_object(object_id: int, db: Annotated[Session, Depends(get_session)]) -> 
 
 @router.get("/objects/", response_model=schemas.PaginatedObject)
 async def get_objects(
-    db: Annotated[Session, Depends(get_session)],
+    db: Annotated[AsyncSession, Depends(get_session)],
     page: Annotated[int, Query(ge=1)] = 1,
     limit: Annotated[int, Query(ge=1, le=100)] = 3,
     category_id: Annotated[
         int | None, Query(description="ID категории (необязательный)")
     ] = None,
 ) -> dict:
-    """_summary_.
+    """Получить список объектов с пагинацией и фильтрацией по категории.
 
-    :param db: _description_
-    :type db: Annotated[Session, Depends
-    :param page: _description_, defaults to 1)]=1
-    :type page: Annotated[int, Query, optional
-    :param limit: _description_, defaults to 1, le=100)]=3
-    :type limit: Annotated[int, Query, optional
-    :param category_id: _description_, defaults to "ID категории (необязательный)") ]=None
-    :type category_id: Annotated[ int  |  None, Query, optional
-    :return: _description_
-    :rtype: dict
+    Возвращает объекты, отсортированные по дате создания (новые сверху).
+    Каждый объект содержит связанные данные: пользователя, город, категорию,
+    транзакцию и количество комментариев.
     """
     offset = (page - 1) * limit
 
     stmt = select(func.count(models.Object.id))
     if category_id is not None:
         stmt = stmt.where(models.Object.category_id == category_id)
-    total = db.scalar(stmt)
+    total = await db.scalar(stmt)
 
     category_name = None
     if category_id is not None:
         name_stmt = select(models.Category.title).where(
             models.Category.id == category_id
         )
-        category_name = db.scalar(name_stmt)
+        category_name = await db.scalar(name_stmt)
 
     subq = (
         select(models.Comment.object_id, func.count(models.Comment.id).label("cnt"))
@@ -126,7 +117,8 @@ async def get_objects(
     if category_id is not None:
         stmt = stmt.where(models.Object.category_id == category_id)
 
-    rows = db.execute(stmt).all()
+    result = await db.execute(stmt)
+    rows = result.all()
 
     results = [
         {

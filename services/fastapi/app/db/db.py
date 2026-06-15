@@ -3,6 +3,7 @@ from pathlib import Path
 
 from dotenv import dotenv_values
 from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 path_to_env_local = Path.cwd().parent.parent / ".env"
@@ -22,16 +23,25 @@ else:
     POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 
 
-DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+ASYNC_DATABASE_URL = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
-engine = create_engine(DATABASE_URL, echo=False)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+async_engine = create_async_engine(ASYNC_DATABASE_URL, echo=False)
+AsyncSessionLocal = async_sessionmaker(
+    async_engine,
+    class_=AsyncSession,
+    expire_on_commit=False,  # важно для async!
+)
 Base = declarative_base()
 
 
-def get_session():
-    session = SessionLocal()
-    try:
+async def get_session():
+    async with AsyncSessionLocal() as session:
         yield session
-    finally:
-        session.close()
+
+
+# def get_session():
+#     session = SessionLocal()
+#     try:
+#         yield session
+#     finally:
+#         session.close()
