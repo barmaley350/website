@@ -53,17 +53,17 @@ const breadcrumbsData = computed(() => {
             <UPagination v-model:page="paginationPageNumber" :total="countFlats" />
         </div>
 
-        <div class="grid grid-cols-12 gap-3">
+        <div class="grid grid-cols-12 gap-5">
             <div class="col-span-9">
-                <div class="flex flex-col gap-3" v-if="data">
-                    <LayoutCard v-for="item in data.results">
+                <div class="flex flex-col gap-10" v-if="data">
+                    <LayoutCardHorizontal v-for="item in data.results">
                         <template #title>
                             <LayoutTitle class="text-xl grow font-bold">
                                 <NuxtLink class="navbar-brand hover:underline underline-offset-4"
                                     :to="'/objects/' + item.object.id">{{ item.object.title }}</NuxtLink>
 
                             </LayoutTitle>
-                            <LayoutBadges class="bg-green-200 text-gray-600" v-if="item.comments_count">
+                            <LayoutBadges class="bg-gray-100 text-gray-600" v-if="item.comments_count">
                                 <Icon name="i-lucide:message-circle" /> {{ item.comments_count }}
                             </LayoutBadges>
                             <ButtonsGreen class="bg-green-600 ">
@@ -131,13 +131,13 @@ const breadcrumbsData = computed(() => {
                             </div>
 
                         </template>
-                    </LayoutCard>
+                    </LayoutCardHorizontal>
                 </div>
 
             </div>
             <div class="col-span-3">
                 <LayoutSidebarRight>
-                    <LayoutCard>
+                    <LayoutCardHorizontal>
                         <template #description>
                             <div class="flex flex-row justify-between">
                                 <div class="text-2xl">Всего объектов</div>
@@ -145,8 +145,8 @@ const breadcrumbsData = computed(() => {
                             </div>
 
                         </template>
-                    </LayoutCard>
-                    <LayoutCard>
+                    </LayoutCardHorizontal>
+                    <LayoutCardHorizontal>
                         <template #title>
                             <LayoutTitle class="text-xl font-bold">По городам</LayoutTitle>
                         </template>
@@ -161,8 +161,8 @@ const breadcrumbsData = computed(() => {
                                 </div>
                             </div>
                         </template>
-                    </LayoutCard>
-                    <LayoutCard>
+                    </LayoutCardHorizontal>
+                    <LayoutCardHorizontal>
                         <template #title>
                             <LayoutTitle class="text-xl font-bold">По категориям</LayoutTitle>
                         </template>
@@ -177,9 +177,9 @@ const breadcrumbsData = computed(() => {
                                 </div>
                             </div>
                         </template>
-                    </LayoutCard>
+                    </LayoutCardHorizontal>
 
-                    <LayoutCard>
+                    <LayoutCardHorizontal>
                         <template #title>
                             <LayoutTitle class="text-xl font-bold">По типам предложений</LayoutTitle>
                         </template>
@@ -194,7 +194,7 @@ const breadcrumbsData = computed(() => {
                                 </div>
                             </div>
                         </template>
-                    </LayoutCard>
+                    </LayoutCardHorizontal>
                 </LayoutSidebarRight>
             </div>
         </div>

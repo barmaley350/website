@@ -13,6 +13,23 @@ from app.db.db import get_session
 router = APIRouter(prefix="/api/v1", tags=["Objects"])
 
 
+@router.get(
+    "/objects/{object_id}/related/", response_model=schemas.ObjectResponseSingle
+)
+async def get_object_related(
+    object_id: int,
+    db: Annotated[AsyncSession, Depends(get_session)],
+) -> dict:
+    stmt = select(models.Object).where(models.Object.id == object_id)
+    result = await db.execute(stmt)
+    obj = result.scalar_one_or_none()  # сразу объект или None
+
+    if obj is None:
+        raise HTTPException(404, "Object not found")
+
+    return {}
+
+
 @router.get("/objects/{object_id}", response_model=schemas.ObjectResponseSingle)
 async def get_object(
     object_id: int, db: Annotated[AsyncSession, Depends(get_session)]
@@ -51,6 +68,20 @@ async def get_object(
         raise HTTPException(400, "Multiple objects found") from None
 
     obj, user, city, category, transaction = row
+
+    similar_stmt = (
+        select(models.Object)
+        .where(
+            models.Object.city_id == obj.city_id,
+            models.Object.category_id == obj.category_id,
+            models.Object.transaction_id == obj.transaction_id,
+            models.Object.id != object_id,
+        )
+        .limit(3)
+    )
+    similar_result = await db.execute(similar_stmt)
+    similar_objects = similar_result.scalars().all()
+
     return {
         "object": obj,
         "user": user,
@@ -58,6 +89,7 @@ async def get_object(
         "category": category,
         "transaction": transaction,
         "comments_count": comments_count or 0,
+        "similar_objects": similar_objects,
     }
 
 

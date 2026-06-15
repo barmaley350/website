@@ -35,7 +35,7 @@ function getRandomFlatNumber() {
     <div class="grid grid-cols-12 gap-3 mt-5">
         <div class="col-span-8">
             <div class="flex flex-col gap-3" v-if="data">
-                <LayoutCard>
+                <LayoutCardHorizontal>
                     <template #title>
                         <LayoutTitle class="text-xl font-bold">
                             {{ data.object.title }}
@@ -67,13 +67,13 @@ function getRandomFlatNumber() {
                         </div>
                     </template>
 
-                </LayoutCard>
+                </LayoutCardHorizontal>
             </div>
 
         </div>
         <div class="col-span-4">
             <LayoutSidebarRight>
-                <LayoutCard>
+                <LayoutCardHorizontal>
                     <template #title>
                         <ButtonsGreen class="bg-green-600 ">
                             <Icon name="i-lucide:dollar-sign" /> {{ data.object.price.toLocaleString('ru-RU') }}
@@ -106,9 +106,44 @@ function getRandomFlatNumber() {
                             <div>{{ data.object.created_at?.replace('T', ' ').split('.')[0] || '' }}</div>
                         </div>
                     </template>
-                </LayoutCard>
+                </LayoutCardHorizontal>
 
             </LayoutSidebarRight>
         </div>
+    </div>
+
+
+    <div class="flex justify-center gap-5 p-10">
+        <LayoutText>
+            <template #header_primary>
+                <LayoutTitle class="text-xl font-bold underline">
+                    Похожие объекты
+                </LayoutTitle>
+            </template>
+            <template #header_secondary>
+                <LayoutTitle class="text-base">
+                    Похожие объекты подбираются по категории, городу и типу сделки
+                </LayoutTitle>
+            </template>
+        </LayoutText>
+    </div>
+
+    <div class="grid grid-cols-3 gap-5 mt-5">
+        <!-- {{ data.similar_objects }} -->
+        <LayoutCard v-for="similar_object in data.similar_objects" :key="similar_object.id">
+            <template #image>
+                <div class="w-full">
+                    <img class=" h-64 w-full object-cover rounded-t-lg"
+                        :src="`http://localhost:1338/img2/${getRandomFlatNumber()}.jpg`">
+                </div>
+            </template>
+            <template #title>
+                <LayoutTitle class="text-2xl">{{ similar_object.title.slice(0, 50) }}</LayoutTitle>
+                <!-- <TitlesRegularNormal></TitlesRegularNormal> -->
+            </template>
+            <template #description>
+                {{ similar_object.description.slice(0, 300) }}
+            </template>
+        </LayoutCard>
     </div>
 </template>

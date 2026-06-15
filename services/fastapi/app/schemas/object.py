@@ -36,6 +36,7 @@ class ObjectResponseSingle(BaseModel):
     category: category.CategoryResponse
     transaction: transaction.TransactionResponse
     comments_count: int | None = None
+    similar_objects: list[ObjectResponse] | None = None
 
     class Config:
         from_attributes = True  # раньше orm_mode
