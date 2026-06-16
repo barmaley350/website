@@ -22,6 +22,7 @@ else:
     POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
     POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 
+Base = declarative_base()
 
 ASYNC_DATABASE_URL = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
 
@@ -31,7 +32,6 @@ AsyncSessionLocal = async_sessionmaker(
     class_=AsyncSession,
     expire_on_commit=False,  # важно для async!
 )
-Base = declarative_base()
 
 
 async def get_session():

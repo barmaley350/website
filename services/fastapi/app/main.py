@@ -2,11 +2,9 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from .db.db import async_engine
-from .routers.main import router as main_router
-from .routers.object import router as object_router
-from .routers.post import router as post_router
-from .routers.stat import router as stat_router
+from app.db.db import async_engine
+from app.endpoints import main, stat
+from app.endpoints import object as flats
 
 
 @asynccontextmanager
@@ -17,8 +15,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="TestAPI", version="1.0.0", root_path="/backend", lifespan=lifespan)
 
-
-app.include_router(main_router)
-# app.include_router(post_router)
-app.include_router(object_router)
-app.include_router(stat_router)
+app.include_router(flats.router)
+app.include_router(main.router)
+app.include_router(stat.router)

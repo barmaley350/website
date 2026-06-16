@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, FastAPI, HTTPException, Query
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-import app.models as models
+from app import models
 from app.db.db import get_session
 from app.schemas import PaginatedResponse, PostResponse
 

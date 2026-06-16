@@ -13,3 +13,5 @@ wheels/
 .env
 commands.txt
 .ruff_cache
+
+.gigacode
