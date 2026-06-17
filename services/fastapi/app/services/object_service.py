@@ -11,49 +11,53 @@ class ObjectService:
     def __init__(self, session: AsyncSession):
         self.repo = ObjectRepository(session)
 
-    async def get_similar_objects(self, obj: models.Object) -> list[models.Object]:
-        return await self.repo.get_similar_objects(
-            object_id=obj.id,
-            city_id=obj.city_id,
-            category_id=obj.category_id,
-            transaction_id=obj.transaction_id,
-        )
+    async def get_objects_related(self, obj: models.Object) -> dict[str, Any]:
+        rows = await self.repo.get_similar_objects(obj=obj)
+        renamed_rows = [
+            {
+                "object": r["Object"],
+                "user": r["User"],
+                "city": r["City"],
+                "category": r["Category"],
+                "transaction": r["Transaction"],
+                "comments_count": r["comments_count"],
+            }
+            for r in rows
+        ]
 
-    async def get_object_response(self, object_id: int) -> dict[str, Any]:
+        return {
+            "results": renamed_rows,
+        }
+
+    async def get_object(self, object_id: int) -> dict[str, Any]:
         """Собирает все данные для ответа на запрос GET /objects/{object_id}.
 
         Возвращает словарь, который можно сразу отдать как JSON.
         """
-        # Получаем объект и связанные сущности
-        (
-            obj,
-            user,
-            city,
-            category,
-            transaction,
-        ) = await self.repo.get_object_with_relations(object_id)
+        # # Количество комментариев
 
-        # Количество комментариев
-        comments_count = await self.repo.get_comments_count(object_id)
+        obj = await self.repo.get_object_by_id(object_id)
+        rows = await self.repo.get_object(obj=obj)
 
         # Похожие объекты
-        similar_objects = await self.get_similar_objects(obj)
+        # similar_objects = await self.get_similar_objects(obj)
 
         return {
-            "object": obj,
-            "user": user,
-            "city": city,
-            "category": category,
-            "transaction": transaction,
-            "comments_count": comments_count,
-            "similar_objects": similar_objects,
+            "object": rows["Object"],
+            "user": rows["User"],
+            "city": rows["City"],
+            "category": rows["Category"],
+            "transaction": rows["Transaction"],
+            "comments_count": rows["comments_count"],
+            # "similar_objects": None,
         }
 
-    async def get_objects_response(
+    async def get_objects(
         self,
+        *,
         page: int = 1,
         limit: int = 10,
-        category_id: int | None = None,
+        filters: dict[str, Any],
     ) -> dict[str, Any]:
         """Формирует ответ для GET /objects/.
 
@@ -65,36 +69,37 @@ class ObjectService:
         offset = (page - 1) * limit
 
         # Получаем общее количество (для пагинации)
-        total = await self.repo.get_objects_count(category_id)
+        total = await self.repo.get_objects_count(filters)
 
         # Если задан category_id, получаем его название
-        category_name = None
-        if category_id is not None:
-            category_name = await self.repo.get_category_name(category_id)
+        category_name = await self.repo.get_category_name_by_id(filters)
 
         # Получаем сами объекты
-        rows = await self.repo.get_objects_with_comments(
-            category_id=category_id,
+        rows = await self.repo.get_objects(
+            filters=filters,
             offset=offset,
             limit=limit,
         )
 
-        # Преобразуем кортежи в удобный для ответа список
-        results = [
+        renamed_rows = [
             {
-                "object": obj,
-                "user": user,
-                "city": city,
-                "category": category,
-                "transaction": transaction,
-                "comments_count": cnt,
+                "object": r["Object"],
+                "user": r["User"],
+                "city": r["City"],
+                "category": r["Category"],
+                "transaction": r["Transaction"],
+                "comments_count": r["comments_count"],
             }
-            for obj, user, city, category, transaction, cnt in rows
+            for r in rows
         ]
 
         return {
             "count": total,
-            "results": results,
+            "results": renamed_rows,
             "category_name": category_name,
-            "category_id": category_id,
+            "category_id": filters.get("category_id") if filters else None,
         }
+
+    async def get_object_by_id(self, object_id: int) -> models.Object | None:
+        """Получает объект по его ID или None, если не найден."""
+        return await self.repo.get_object_by_id(object_id)

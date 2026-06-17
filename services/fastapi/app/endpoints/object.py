@@ -2,29 +2,28 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import APIRouter, Depends, Query
 
-from app import models, schemas, services
-from app.core.dependencies import get_object_service, get_session
+from app import schemas, services
+from app.core.dependencies import get_object_service
 
 router = APIRouter(prefix="/api/v1", tags=["Objects"])
 
 
-# @router.get(
-#     "/objects/{object_id}/related/", response_model=list[schemas.ObjectResponseSingle]
-# )
-# async def get_object_related(
-#     object_id: int,
-#     service: Annotated[services.ObjectService, Depends(get_object_service)],
-# ) -> dict:
-#     """Получить связанные объекты."""
+@router.get(
+    "/objects/{object_id}/related/",
+    response_model=schemas.RelatedObjectsResponse,
+)
+async def get_object_related(
+    object_id: int,
+    service: Annotated[services.ObjectService, Depends(get_object_service)],
+) -> dict:
+    """Получить связанные объекты."""
+    obj = await service.get_object_by_id(object_id)
+    return await service.get_objects_related(obj)
 
-#     return await service.get_similar_objects()
 
-
-@router.get("/objects/{object_id}", response_model=schemas.ObjectResponseSingle)
+@router.get("/objects/{object_id}", response_model=schemas.ObjectResponseWithRelations)
 async def get_object(
     object_id: int,
     service: Annotated[services.ObjectService, Depends(get_object_service)],
@@ -33,11 +32,11 @@ async def get_object(
 
     Возвращает полную информацию об объекте, включая связанные данные:
     пользователя, город, категорию, транзакцию и количество комментариев.
-    """
-    return await service.get_object_response(object_id)
+    """  # noqa: RUF002 TODO: fix later
+    return await service.get_object(object_id)
 
 
-@router.get("/objects/", response_model=schemas.PaginatedObject)
+@router.get("/objects/", response_model=schemas.PaginatedObjectsResponse)
 async def get_objects(
     service: Annotated[services.ObjectService, Depends(get_object_service)],
     page: Annotated[int, Query(ge=1)] = 1,
@@ -51,9 +50,12 @@ async def get_objects(
     Возвращает объекты, отсортированные по дате создания (новые сверху).
     Каждый объект содержит связанные данные: пользователя, город, категорию,
     транзакцию и количество комментариев.
-    """
-    return await service.get_objects_response(
+    """  # noqa: RUF002 TODO: fix later
+    filters = {
+        "category_id": category_id,
+    }
+    return await service.get_objects(
         page=page,
         limit=limit,
-        category_id=category_id,
+        filters=filters,
     )

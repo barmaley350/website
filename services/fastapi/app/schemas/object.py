@@ -29,21 +29,25 @@ class ObjectResponse(BaseModel):
     created_at: datetime
 
 
-class ObjectResponseSingle(BaseModel):
+class ObjectResponseWithRelations(BaseModel):
     object: ObjectResponse
     user: user.UserResponse
     city: city.CityResponse
     category: category.CategoryResponse
     transaction: transaction.TransactionResponse
     comments_count: int | None = None
-    similar_objects: list[ObjectResponse] | None = None
+    # similar_objects: list[ObjectResponse] | None = None
 
     class Config:
         from_attributes = True  # раньше orm_mode
 
 
-class PaginatedObject(BaseModel):
-    count: int
+class PaginatedObjectsResponse(BaseModel):
+    count: int | None = None
     category_id: int | None = None
     category_name: str | None = None
-    results: list[ObjectResponseSingle]
+    results: list[ObjectResponseWithRelations]
+
+
+class RelatedObjectsResponse(BaseModel):
+    results: list[ObjectResponseWithRelations]
