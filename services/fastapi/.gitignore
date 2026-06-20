@@ -1,0 +1,62 @@
+# Виртуальные окружения и зависимости
+venv/
+.venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Python байт-код
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Файлы менеджера пакетов
+poetry.lock
+poetry.toml
+Pipfile
+Pipfile.lock
+requirements.txt.bak
+
+# IDE и редакторы
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Локальные конфиги и секреты (НИКОГДА не коммить в git!)
+.env
+.env.local
+.env.*.local
+secrets.json
+config/local_config.py
+
+# Логи, тесты, артефакты CI/CD
+logs/
+*.log
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+coverage.xml
+
+# Docker и контейнеры
+docker-compose.override.yml
+.dockerignore
+
+# База данных (если используете SQLite локально)
+*.db
+*.sqlite
+*.sqlite3
+
+# Сгенерированная документация
+docs/_build/
+site/
