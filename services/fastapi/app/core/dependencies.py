@@ -24,6 +24,6 @@ async def get_object_repository(
 
 # Зависимость, которая возвращает сервис
 async def get_object_service(
-    session: Annotated[AsyncSession, Depends(get_session)],
+    repo: Annotated[ObjectRepository, Depends(get_object_repository)],
 ) -> ObjectService:
-    return ObjectService(session)
+    return ObjectService(repo)

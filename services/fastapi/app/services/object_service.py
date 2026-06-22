@@ -1,15 +1,13 @@
 # app/services/object_service.py
 from typing import Any
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app import models
 from app.repositories.object_repository import ObjectRepository
 
 
 class ObjectService:
-    def __init__(self, session: AsyncSession):
-        self.repo = ObjectRepository(session)
+    def __init__(self, repo: ObjectRepository):
+        self.repo = repo
 
     async def get_objects_related(self, obj: models.Object) -> dict[str, Any]:
         rows = await self.repo.get_similar_objects(obj=obj)
