@@ -4,7 +4,7 @@ from sqlalchemy import DateTime, ForeignKey, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app import models
-from app.db.db import Base
+from app.core.settings import Base
 
 
 class Comment(Base):

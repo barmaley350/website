@@ -1,7 +1,7 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
-from app.db.db import Base
+from app.core.settings import Base
 
 
 # TODO Добавить nullable=False к created_at

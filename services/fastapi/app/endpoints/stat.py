@@ -5,7 +5,7 @@ from sqlalchemy import desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import models
-from app.db.db import get_session
+from app.core.dependencies import get_session
 from app.schemas import StatResponse
 
 router = APIRouter(prefix="/api/v1", tags=["Stats"])

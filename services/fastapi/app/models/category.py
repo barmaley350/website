@@ -1,7 +1,7 @@
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.db.db import Base
+from app.core.settings import Base
 
 
 # Коммерческая недвижимость, Земельные участки, Готовый бизнес, Виллы

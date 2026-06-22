@@ -5,7 +5,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app import models
-from app.db.db import get_session
+from app.core.dependencies import get_session
 from app.schemas import PaginatedResponse, PostResponse
 
 router = APIRouter(prefix="/api/v1", tags=["Posts"])
