@@ -4,18 +4,18 @@ from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 
-from app.db.db import async_engine
+from app.core.dependencies import db
 from app.endpoints import main, stat
 from app.endpoints import object as flats
 
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     yield
+#     await db.db_engine.dispose()  # закрыть пул соединений
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    yield
-    await async_engine.dispose()  # закрыть пул соединений
 
-
-app = FastAPI(title="TestAPI", version="1.0.0", root_path="/backend", lifespan=lifespan)
+# app = FastAPI(title="TestAPI", version="1.0.0", root_path="/backend", lifespan=lifespan)
+app = FastAPI(title="TestAPI", version="1.0.0", root_path="/backend")
 
 
 @app.exception_handler(NoResultFound)
