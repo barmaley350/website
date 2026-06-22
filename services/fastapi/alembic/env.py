@@ -7,31 +7,32 @@ from sqlalchemy import engine_from_config, pool
 
 import app.models  # noqa: F401
 from alembic import context
-from app.db.db import Base
+from app.core.settings import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
 # Получаем URL из переменной окружения
+# Для того чтобы запускать миграции с локальной машины а не только в контейнере
 path_to_env_local = Path.cwd().parent.parent / ".env"
 
 if path_to_env_local.exists():
     env_vars = dotenv_values(path_to_env_local)
-    POSTGRES_HOST = "localhost"
-    POSTGRES_DB = env_vars.get("POSTGRES_DB")
-    POSTGRES_USER = env_vars.get("POSTGRES_USER")
-    POSTGRES_PASSWORD = env_vars.get("POSTGRES_PASSWORD")
-    POSTGRES_PORT = env_vars.get("POSTGRES_PORT")
+    POSTGRES_DB_HOST = "localhost"
+    POSTGRES_DB_NAME = env_vars.get("POSTGRES_DB_NAME")
+    POSTGRES_DB_USER = env_vars.get("POSTGRES_DB_USER")
+    POSTGRES_DB_PASSWORD = env_vars.get("POSTGRES_DB_PASSWORD")
+    POSTGRES_DB_PORT = env_vars.get("POSTGRES_DB_PORT")
 else:
-    POSTGRES_HOST = os.getenv("POSTGRES_HOST")
-    POSTGRES_DB = os.getenv("POSTGRES_DB")
-    POSTGRES_USER = os.getenv("POSTGRES_USER")
-    POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-    POSTGRES_PORT = os.getenv("POSTGRES_PORT")
+    POSTGRES_DB_HOST = os.getenv("POSTGRES_DB_HOST")
+    POSTGRES_DB_NAME = os.getenv("POSTGRES_DB_NAME")
+    POSTGRES_DB_USER = os.getenv("POSTGRES_DB_USER")
+    POSTGRES_DB_PASSWORD = os.getenv("POSTGRES_DB_PASSWORD")
+    POSTGRES_DB_PORT = os.getenv("POSTGRES_DB_PORT")
 
 
-database_url = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+database_url = f"postgresql://{POSTGRES_DB_USER}:{POSTGRES_DB_PASSWORD}@{POSTGRES_DB_HOST}:{POSTGRES_DB_PORT}/{POSTGRES_DB_NAME}"
 # Переопределяем sqlalchemy.url
 config.set_main_option("sqlalchemy.url", database_url)
 
