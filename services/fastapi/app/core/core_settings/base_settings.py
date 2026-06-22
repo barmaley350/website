@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import ClassVar, Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 

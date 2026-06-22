@@ -1,9 +1,8 @@
 from pathlib import Path
 
 from pydantic import SecretStr
-from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from .base_settings import MyBaseSettings
+from app.core.core_settings.base_settings import MyBaseSettings
 
 
 class DBSettings(MyBaseSettings):
