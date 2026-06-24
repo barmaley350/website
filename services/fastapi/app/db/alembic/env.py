@@ -10,32 +10,34 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from app.apps import models
-from app.core.settings import Base
+from app.core.settings import Base, settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
-path_to_env_local = Path.cwd().parent.parent / ".env"
+# path_to_env_local = Path.cwd().parent.parent / ".env"
 
-if path_to_env_local.exists():
-    env_vars = dotenv_values(path_to_env_local)
-    POSTGRES_DB_HOST = "localhost"
-    POSTGRES_DB_NAME = env_vars.get("POSTGRES_DB_NAME")
-    POSTGRES_DB_USER = env_vars.get("POSTGRES_DB_USER")
-    POSTGRES_DB_PASSWORD = env_vars.get("POSTGRES_DB_PASSWORD")
-    POSTGRES_DB_PORT = env_vars.get("POSTGRES_DB_PORT")
-else:
-    POSTGRES_DB_HOST = os.getenv("POSTGRES_DB_HOST")
-    POSTGRES_DB_NAME = os.getenv("POSTGRES_DB_NAME")
-    POSTGRES_DB_USER = os.getenv("POSTGRES_DB_USER")
-    POSTGRES_DB_PASSWORD = os.getenv("POSTGRES_DB_PASSWORD")
-    POSTGRES_DB_PORT = os.getenv("POSTGRES_DB_PORT")
+# if path_to_env_local.exists():
+#     env_vars = dotenv_values(path_to_env_local)
+#     POSTGRES_DB_HOST = "localhost"
+#     POSTGRES_DB_NAME = env_vars.get("POSTGRES_DB_NAME")
+#     POSTGRES_DB_USER = env_vars.get("POSTGRES_DB_USER")
+#     POSTGRES_DB_PASSWORD = env_vars.get("POSTGRES_DB_PASSWORD")
+#     POSTGRES_DB_PORT = env_vars.get("POSTGRES_DB_PORT")
+# else:
+#     POSTGRES_DB_HOST = os.getenv("POSTGRES_DB_HOST")
+#     POSTGRES_DB_NAME = os.getenv("POSTGRES_DB_NAME")
+#     POSTGRES_DB_USER = os.getenv("POSTGRES_DB_USER")
+#     POSTGRES_DB_PASSWORD = os.getenv("POSTGRES_DB_PASSWORD")
+#     POSTGRES_DB_PORT = os.getenv("POSTGRES_DB_PORT")
 
 
-database_url = f"postgresql+asyncpg://{POSTGRES_DB_USER}:{POSTGRES_DB_PASSWORD}@{POSTGRES_DB_HOST}:{POSTGRES_DB_PORT}/{POSTGRES_DB_NAME}"
-# Переопределяем sqlalchemy.url
-config.set_main_option("sqlalchemy.url", database_url)
+# database_url = f"postgresql+asyncpg://{POSTGRES_DB_USER}:{POSTGRES_DB_PASSWORD}@{POSTGRES_DB_HOST}:{POSTGRES_DB_PORT}/{POSTGRES_DB_NAME}"
+# # Переопределяем sqlalchemy.url
+# config.set_main_option("sqlalchemy.url", database_url)
+
+config.set_main_option("sqlalchemy.url", settings.db_settings.db_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
