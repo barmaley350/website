@@ -14,6 +14,8 @@ async def get_session():
     async with db.db_session() as session:
         yield session
 
+async def get_engine():
+    return db.db_engine
 
 # Зависимость, которая возвращает репозиторий
 async def get_object_repository(
