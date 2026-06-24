@@ -1,13 +1,14 @@
+import asyncio
 import os
 from logging.config import fileConfig
 from pathlib import Path
 
-from dotenv import dotenv_values
-from sqlalchemy import engine_from_config, pool
-
 from alembic import context
+from dotenv import dotenv_values
+from sqlalchemy import pool
+from sqlalchemy.engine import Connection
+from sqlalchemy.ext.asyncio import async_engine_from_config
 
-# import app.models  # noqa: F401
 from app.apps import models
 from app.core.settings import Base
 
@@ -15,8 +16,6 @@ from app.core.settings import Base
 # access to the values within the .ini file in use.
 config = context.config
 
-# Получаем URL из переменной окружения
-# Для того чтобы запускать миграции с локальной машины а не только в контейнере
 path_to_env_local = Path.cwd().parent.parent / ".env"
 
 if path_to_env_local.exists():
@@ -34,7 +33,7 @@ else:
     POSTGRES_DB_PORT = os.getenv("POSTGRES_DB_PORT")
 
 
-database_url = f"postgresql://{POSTGRES_DB_USER}:{POSTGRES_DB_PASSWORD}@{POSTGRES_DB_HOST}:{POSTGRES_DB_PORT}/{POSTGRES_DB_NAME}"
+database_url = f"postgresql+asyncpg://{POSTGRES_DB_USER}:{POSTGRES_DB_PASSWORD}@{POSTGRES_DB_HOST}:{POSTGRES_DB_PORT}/{POSTGRES_DB_NAME}"
 # Переопределяем sqlalchemy.url
 config.set_main_option("sqlalchemy.url", database_url)
 
@@ -47,8 +46,6 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-
-
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
@@ -81,24 +78,35 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
-def run_migrations_online() -> None:
-    """Run migrations in 'online' mode.
+def do_run_migrations(connection: Connection) -> None:
+    context.configure(connection=connection, target_metadata=target_metadata)
 
-    In this scenario we need to create an Engine
+    with context.begin_transaction():
+        context.run_migrations()
+
+
+async def run_async_migrations() -> None:
+    """In this scenario we need to create an Engine
     and associate a connection with the context.
 
     """
-    connectable = engine_from_config(
+
+    connectable = async_engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
 
-    with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+    async with connectable.connect() as connection:
+        await connection.run_sync(do_run_migrations)
 
-        with context.begin_transaction():
-            context.run_migrations()
+    await connectable.dispose()
+
+
+def run_migrations_online() -> None:
+    """Run migrations in 'online' mode."""
+
+    asyncio.run(run_async_migrations())
 
 
 if context.is_offline_mode():
