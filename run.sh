@@ -7,6 +7,7 @@ NC='\033[0m'          # Сброс цвета
 
 FASTAPI_DIR="./services/fastapi"
 ROOT_DIR=$(pwd)
+DOCKER_BACKEND_CONTAINER="fastapi_prg-service.backend-1"
 
 # Проверка статуса выполнения команды
 check_command_run_status() {
@@ -55,7 +56,7 @@ apply_mirgations() {
     clear
     cd $ROOT_DIR
     cd $FASTAPI_DIR 
-    uv run alembic upgrade head
+    docker exec -it $DOCKER_BACKEND_CONTAINER uv run alembic upgrade head
 }
 
 make_mirgations() {
@@ -63,7 +64,7 @@ make_mirgations() {
     read -p "Описание миграции (флаг -m): " description
     cd $ROOT_DIR
     cd $FASTAPI_DIR 
-    uv run alembic revision --autogenerate -m "${description}"
+    docker exec -it $DOCKER_BACKEND_CONTAINER uv run alembic revision --autogenerate -m "${description}"
 }
 gen_compose_viz() {
     clear
