@@ -1,0 +1,9 @@
+from datetime import datetime
+
+from pydantic import BaseModel
+
+
+class UserResponse(BaseModel):
+    username: str
+    email: str
+    phone: str

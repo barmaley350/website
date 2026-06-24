@@ -1,12 +1,8 @@
-from contextlib import asynccontextmanager
-
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import MultipleResultsFound, NoResultFound
 
-from app.core.dependencies import db
-from app.endpoints import main, stat
-from app.endpoints import object as flats
+from app.apps import routers
 
 # @asynccontextmanager
 # async def lifespan(app: FastAPI):
@@ -35,6 +31,6 @@ async def handle_multiple_results(request: Request, exc: MultipleResultsFound):
     )
 
 
-app.include_router(flats.router)
-app.include_router(main.router)
-app.include_router(stat.router)
+app.include_router(routers.flats)
+app.include_router(routers.main)
+app.include_router(routers.stat)

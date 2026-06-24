@@ -5,8 +5,10 @@ from pathlib import Path
 from dotenv import dotenv_values
 from sqlalchemy import engine_from_config, pool
 
-import app.models  # noqa: F401
 from alembic import context
+
+# import app.models  # noqa: F401
+from app.apps import models
 from app.core.settings import Base
 
 # this is the Alembic Config object, which provides
