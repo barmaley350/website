@@ -1,2 +1,29 @@
+/* app/assets/css/main.css */
 @import "tailwindcss";
+/* @tailwind utilities; */
+
 @import "@nuxt/ui";
+
+
+@theme static {
+  --color-brand-50: oklch(0.97 0.01 215);
+  --color-brand-100: oklch(0.92 0.03 215);
+  --color-brand-200: oklch(0.83 0.06 215);
+  --color-brand-300: oklch(0.73 0.09 215);
+  --color-brand-400: oklch(0.62 0.13 215);
+  --color-brand-500: oklch(0.52 0.17 215);
+  --color-brand-600: oklch(0.45 0.15 215);
+  --color-brand-700: oklch(0.39 0.13 215);
+  --color-brand-800: oklch(0.34 0.11 215);
+  --color-brand-900: oklch(0.25 0.08 215);
+  --color-brand-950: oklch(0.18 0.06 215);
+}
+
+:root {
+  --ui-primary: var(--color-brand-500);
+  --ui-primary-hover: var(--color-brand-600);
+  --ui-primary-active: var(--color-brand-700);
+  /* Дополнительно для других состояний */
+  --ui-primary-light: var(--color-brand-100);
+  --ui-primary-dark: var(--color-brand-900);
+}

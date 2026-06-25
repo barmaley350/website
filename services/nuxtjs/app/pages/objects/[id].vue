@@ -85,7 +85,7 @@ function getRandomFlatNumber() {
             <LayoutSidebarRight>
                 <LayoutCardHorizontal>
                     <template #title>
-                        <ButtonsGreen class="bg-green-600 ">
+                        <ButtonsGreen class="bg-brand-600 ">
                             <Icon name="i-lucide:dollar-sign" /> {{ dataObject.object.price.toLocaleString('ru-RU') }}
                         </ButtonsGreen>
                     </template>

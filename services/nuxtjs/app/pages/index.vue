@@ -22,7 +22,7 @@
                 </LayoutTitle>
             </div>
             <div class="flex justify-center">
-                <ButtonsGreen class="text-5xl">Тестовая кнопка</ButtonsGreen>
+                <ButtonsGreen class="text-5xl bg-brand-600">Тестовая кнопка</ButtonsGreen>
             </div>
 
         </div>

@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   modules: ['@nuxt/ui'],
   css: ['~/assets/css/main.css'],
   ui: {
-    fonts: false // Полностью отключает интеграцию с @nuxt/fonts
+    fonts: false, // Полностью отключает интеграцию с @nuxt/fonts
   },
   runtimeConfig: {
     apiInternal: 'http://service.backend:8000/backend/api/v1/',

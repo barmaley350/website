@@ -18,7 +18,6 @@ const apiUrl = process.server
     : runtimeConfig.public.apiBase   // на клиенте — относительный путь
 
 const queryParams = computed(() => {
-    console.log(filters.value.category_id, category_id.value)
     const params = {}
     if (category_id.value !== undefined) {
         params.category_id = category_id.value
@@ -88,7 +87,7 @@ watch(paginationPageNumber, () => {
                             <LayoutBadges class="bg-gray-100 text-gray-600" v-if="item.comments_count">
                                 <Icon name="i-lucide:message-circle" /> {{ item.comments_count }}
                             </LayoutBadges>
-                            <ButtonsGreen class="bg-green-600 ">
+                            <ButtonsGreen class="bg-brand-600 ">
                                 <Icon name="i-lucide:dollar-sign" /> {{ item.object.price.toLocaleString('ru-RU') }}
                             </ButtonsGreen>
                         </template>
