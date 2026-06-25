@@ -45,12 +45,18 @@ const breadcrumbsData = computed(() => {
     return items
 })
 
+watch(paginationPageNumber, () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    // or instant: window.scrollTo(0, 0)
+})
+
 </script>
 <template>
     <div class="flex flex-col gap-3">
         <LayoutBreadcrumbs :breadcrumbsData :key="JSON.stringify(breadcrumbsData)"></LayoutBreadcrumbs>
         <div class="block my-3">
-            <UPagination v-model:page="paginationPageNumber" :total="countFlats" />
+            <UPagination v-model:page="paginationPageNumber" :total="countFlats"
+                :to="(page) => ({ query: { page, category_id: category_id } })" />
         </div>
 
         <div class="grid grid-cols-12 gap-5">
