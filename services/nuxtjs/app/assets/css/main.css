@@ -4,7 +4,7 @@
 
 @import "@nuxt/ui";
 
-
+/* https://javisperez.github.io/tailwindcolorshades/?darkcyan=oklch%280.52+0.17+215%29 */
 @theme static {
   --color-brand-50: oklch(0.97 0.01 215);
   --color-brand-100: oklch(0.92 0.03 215);
