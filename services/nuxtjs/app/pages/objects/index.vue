@@ -1,7 +1,11 @@
 <script setup>
 const { statData, pending: pendingStat, error: errorStat } = useStatData()
 const runtimeConfig = useRuntimeConfig()
-const paginationPageNumber = ref(1)
+const { page } = usePaginationState()
+const { filters, setFilter, resetFilters } = useFiltersState()
+
+const paginationPageNumber = page
+// const paginationPageNumber = ref(1)
 const route = useRoute();
 
 const category_id = computed(() => {
@@ -14,9 +18,17 @@ const apiUrl = process.server
     : runtimeConfig.public.apiBase   // на клиенте — относительный путь
 
 const queryParams = computed(() => {
-    const params = { page: paginationPageNumber.value }
+    console.log(filters.value.category_id, category_id.value)
+    const params = {}
     if (category_id.value !== undefined) {
         params.category_id = category_id.value
+        // paginationPageNumber.value = 1
+    }
+    params.page = paginationPageNumber.value
+    //TODO вынести в отдельную функцию
+    if (filters.value.category_id !== category_id.value) {
+        setFilter('category_id', category_id.value)
+        paginationPageNumber.value = 1
     }
     return params
 })
@@ -50,6 +62,10 @@ watch(paginationPageNumber, () => {
     // or instant: window.scrollTo(0, 0)
 })
 
+// if (filters.value.category_id !== category_id.value) {
+//     setFilter('category_id', category_id.value)
+//     paginationPageNumber.value = 1
+// }
 </script>
 <template>
     <div class="flex flex-col gap-3">
@@ -205,7 +221,8 @@ watch(paginationPageNumber, () => {
             </div>
         </div>
         <div class="block my-3">
-            <UPagination v-model:page="paginationPageNumber" :total="countFlats" />
+            <UPagination v-model:page="paginationPageNumber" :total="countFlats"
+                :to="(page) => ({ query: { page, category_id: category_id } })" />
         </div>
     </div>
 </template>

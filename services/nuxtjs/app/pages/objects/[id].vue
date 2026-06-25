@@ -21,8 +21,14 @@ const { data: dataRelatedObjects, status: statusRelatedObjects, error: errorRela
 const breadcrumbsData = computed(() => {
     // Здесь data.value уже точно существует (благодаря v-if)
     return [
-        { url: `/objects/?category_id=${dataObject.value.object.category_id}`, label: dataObject.value.category.title, separator: true },
-        { url: `/objects/${id}`, label: dataObject.value.transaction.title, separator: true }
+        {
+            url: `/objects/?category_id=${dataObject.value.object.category_id}`,
+            label: dataObject.value.category.title, separator: true
+        },
+        {
+            url: `/objects/`,
+            label: dataObject.value.transaction.title, separator: true
+        }
     ]
 })
 

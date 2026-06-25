@@ -1,5 +1,7 @@
 <script setup>
 const props = defineProps(['breadcrumbsData'])
+const { page } = usePaginationState()
+const { filters, setFilter, resetFilters } = useFiltersState()
 
 const localBreadcrumbsData = [
     {
@@ -23,6 +25,7 @@ if (props.breadcrumbsData && props.breadcrumbsData.length > 0) {
     // Иначе используем только локальный массив
     localData = [...localBreadcrumbsData];
 }
+
 </script>
 
 <template>
