@@ -22,12 +22,18 @@ const breadcrumbsData = computed(() => {
     // Здесь data.value уже точно существует (благодаря v-if)
     return [
         {
-            url: `/objects/?category_id=${dataObject.value.object.category_id}`,
-            label: dataObject.value.category.title, separator: true
+            to: "/objects",
+            label: "Объекты",
+            separator: true,
+            icon: 'i-lucide-box',
         },
         {
-            url: `/objects/`,
-            label: dataObject.value.transaction.title, separator: true
+            to: `/objects/?category_id=${dataObject.value.object.category_id}`,
+            label: dataObject.value.category.title, separator: true, icon: "",
+        },
+        {
+            to: `/objects/`,
+            label: dataObject.value.transaction.title, separator: true, icon: "",
         }
     ]
 })

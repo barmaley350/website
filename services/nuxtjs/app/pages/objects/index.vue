@@ -49,9 +49,16 @@ function getRandomFlatNumber() {
 
 const breadcrumbsData = computed(() => {
     // Здесь data.value уже точно существует (благодаря v-if)
-    const items = []
+    const items = [
+        {
+            to: "/objects",
+            label: "Объекты",
+            separator: true,
+            icon: 'i-lucide-box',
+        },
+    ]
     if (category_id.value !== undefined && data.value["category_name"]) {
-        items.push({ url: `/objects/?category_id=${category_id.value}`, label: data.value["category_name"], separator: true })
+        items.push({ to: `/objects/?category_id=${category_id.value}`, label: data.value["category_name"], separator: true })
     }
     return items
 })
@@ -87,9 +94,9 @@ watch(paginationPageNumber, () => {
                             <LayoutBadges class="bg-gray-100 text-gray-600" v-if="item.comments_count">
                                 <Icon name="i-lucide:message-circle" /> {{ item.comments_count }}
                             </LayoutBadges>
-                            <ButtonsGreen class="bg-brand-600 ">
+                            <LayoutPrice class="">
                                 <Icon name="i-lucide:dollar-sign" /> {{ item.object.price.toLocaleString('ru-RU') }}
-                            </ButtonsGreen>
+                            </LayoutPrice>
                         </template>
 
                         <template #description>

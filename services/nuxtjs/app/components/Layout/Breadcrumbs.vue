@@ -5,14 +5,10 @@ const { filters, setFilter, resetFilters } = useFiltersState()
 
 const localBreadcrumbsData = [
     {
-        url: "/",
+        to: "/",
         label: "Главная",
+        icon: 'i-lucide-book-open',
         separator: false,
-    },
-    {
-        url: "/objects",
-        label: "Объекты",
-        separator: true,
     },
 ]
 
@@ -29,12 +25,11 @@ if (props.breadcrumbsData && props.breadcrumbsData.length > 0) {
 </script>
 
 <template>
-    <div class="flex flex-row">
-        <div class="flex flex-row" v-for="item in localData" :key="item.label">
-            <div class="mx-3" v-if="item.separator">
-                <Icon name="i-lucide:arrow-right" />
-            </div>
-            <NuxtLink class="navbar-brand hover:underline underline-offset-4" :to=item.url>{{ item.label }}</NuxtLink>
+    <div class="flex flex-row mt-5 align-center">
+        <div class="flex flex-row items-center" v-for="item in localData" :key="item.label">
+            <Icon class="mx-1" name="i-lucide:arrow-right" v-if="item.separator" />
+            <Icon class="mr-1" :name="item.icon" v-if="item.icon" />
+            <NuxtLink class="navbar-brand hover:underline underline-offset-4" :to=item.to>{{ item.label }}</NuxtLink>
         </div>
     </div>
 </template>

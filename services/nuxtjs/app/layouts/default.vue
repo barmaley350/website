@@ -1,7 +1,10 @@
 <template>
-    <UContainer>
-        <LayoutNavbar />
-        <slot />
-        <LayoutFooter />
-    </UContainer>
+    <!-- <LayoutNavbar2 /> -->
+    <UMain>
+        <UContainer>
+            <LayoutNavbar2 />
+            <slot />
+            <LayoutFooter />
+        </UContainer>
+    </UMain>
 </template>
