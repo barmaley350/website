@@ -4,49 +4,45 @@ from pydantic import BaseModel
 
 from app.apps.schemas import (
     CategoryResponse,
-    CityResponse,
-    TransactionResponse,
+    GeoResponse,
     UserResponse,
 )
 
 
-class ObjectCreate(BaseModel):
+class ProjectCreate(BaseModel):
     title: str
     content: str
     user_id: int
 
 
-class ObjectResponse(BaseModel):
+class ProjectResponse(BaseModel):
     id: int
     title: str
     description: str
-    price: int
     is_active: bool
     category_id: int
-    city_id: int
-    transaction_id: int
+    geo_id: int
     user_id: int
     created_at: datetime
 
 
-class ObjectResponseWithRelations(BaseModel):
-    object: ObjectResponse
+class ProjectResponseWithRelations(BaseModel):
+    project: ProjectResponse
     user: UserResponse
-    city: CityResponse
+    geo: GeoResponse
     category: CategoryResponse
-    transaction: TransactionResponse
     comments_count: int | None = None
 
     class Config:
         from_attributes = True  # раньше orm_mode
 
 
-class PaginatedObjectsResponse(BaseModel):
+class PaginatedProjectsResponse(BaseModel):
     count: int | None = None
     category_id: int | None = None
     category_name: str | None = None
-    results: list[ObjectResponseWithRelations]
+    results: list[ProjectResponseWithRelations]
 
 
-class RelatedObjectsResponse(BaseModel):
-    results: list[ObjectResponseWithRelations]
+class RelatedProjectsResponse(BaseModel):
+    results: list[ProjectResponseWithRelations]

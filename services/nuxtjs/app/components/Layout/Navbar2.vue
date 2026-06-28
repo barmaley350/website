@@ -5,17 +5,17 @@ const route = useRoute()
 
 const items = computed(() => [
     {
-        label: 'Объекты',
-        to: '/objects',
+        label: 'Проекты',
+        to: '/projects',
         active: route.path.startsWith('/docs/getting-started')
     },
     {
-        label: 'Components',
+        label: 'Основатели',
         to: '/docs/components',
         active: route.path.startsWith('/docs/components')
     },
     {
-        label: 'Figma',
+        label: 'Комментарии',
         to: 'https://go.nuxt.com/figma-ui',
         target: '_blank'
     },

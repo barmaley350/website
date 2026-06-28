@@ -17,64 +17,42 @@ async def get_stats(
 ):
     stmt = (
         select(
-            models.City.title,  # или models.City.id, если нужно
-            func.count(models.Object.id).label("object_count"),
+            models.Geo.name,
+            func.count(models.Project.id).label("project_count"),
         )
-        .join(models.Object, models.City.id == models.Object.city_id)  # INNER JOIN
-        .group_by(models.City.id)  # группируем по городу
-        .order_by(desc("object_count"))
+        .join(models.Project, models.Geo.id == models.Project.geo_id)  # INNER JOIN
+        .group_by(models.Geo.id)  # группируем по городу
+        .order_by(desc("project_count"))
         .limit(5)
     )
 
     result = await db.execute(stmt)
-    cities = result.all()
+    geos = result.all()
 
-    cities_stats = [{"city": city.title, "count": city.object_count} for city in cities]
+    geos_stats = [{"geo": geo.name, "count": geo.project_count} for geo in geos]
 
     #
     stmt = (
         select(
-            models.Category.title,  # или models.City.id, если нужно
-            func.count(models.Object.id).label("object_count"),
+            models.Category.name,  # или models.City.id, если нужно
+            func.count(models.Project.id).label("project_count"),
         )
         .join(
-            models.Category, models.Object.category_id == models.Category.id
+            models.Category, models.Project.category_id == models.Category.id
         )  # INNER JOIN
         .group_by(models.Category.id)  # группируем по городу
-        .order_by(desc("object_count"))
+        .order_by(desc("project_count"))
         .limit(5)
     )
 
     result = await db.execute(stmt)
     categories = result.all()
     categories_stats = [
-        {"category": category.title, "count": category.object_count}
+        {"category": category.name, "count": category.project_count}
         for category in categories
     ]
 
-    #
-    stmt = (
-        select(
-            models.Transaction.title,  # или models.City.id, если нужно
-            func.count(models.Object.id).label("object_count"),
-        )
-        .join(
-            models.Transaction, models.Object.transaction_id == models.Transaction.id
-        )  # INNER JOIN
-        .group_by(models.Transaction.id)  # группируем по городу
-        .order_by(desc("object_count"))
-        .limit(5)
-    )
-
-    result = await db.execute(stmt)
-    transactions = result.all()
-    transactions_stats = [
-        {"transaction": transaction.title, "count": transaction.object_count}
-        for transaction in transactions
-    ]
-
     return {
-        "cities": cities_stats,
+        "geos": geos_stats,
         "categories": categories_stats,
-        "transactions": transactions_stats,
     }

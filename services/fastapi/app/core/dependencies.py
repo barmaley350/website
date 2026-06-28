@@ -3,8 +3,8 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.apps.object.repositories import ObjectRepository
-from app.apps.object.services import ObjectService
+from app.apps.project.repositories import ProjectRepository
+from app.apps.project.services import ProjectService
 from app.core.core_dependencies.db_dependency import DBDependency
 
 db = DBDependency()
@@ -18,14 +18,14 @@ async def get_engine():
     return db.db_engine
 
 # Зависимость, которая возвращает репозиторий
-async def get_object_repository(
+async def get_project_repository(
     session: Annotated[AsyncSession, Depends(get_session)],
-) -> ObjectRepository:
-    return ObjectRepository(session)
+) -> ProjectRepository:
+    return ProjectRepository(session)
 
 
 # Зависимость, которая возвращает сервис
-async def get_object_service(
-    repo: Annotated[ObjectRepository, Depends(get_object_repository)],
-) -> ObjectService:
-    return ObjectService(repo)
+async def get_project_service(
+    repo: Annotated[ProjectRepository, Depends(get_project_repository)],
+) -> ProjectService:
+    return ProjectService(repo)

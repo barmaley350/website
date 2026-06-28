@@ -32,9 +32,9 @@ const queryParams = computed(() => {
     return params
 })
 
-const { data, status, error, pending } = await useFetch(`${apiUrl}objects/`, {
+const { data, status, error, pending } = await useFetch(`${apiUrl}projects/`, {
     query: queryParams,
-    key: computed(() => `objects-list-${paginationPageNumber.value}-${category_id}`)
+    key: computed(() => `projects-list-${paginationPageNumber.value}-${category_id}`)
 })
 
 const countFlats = computed(() => {
@@ -51,14 +51,14 @@ const breadcrumbsData = computed(() => {
     // Здесь data.value уже точно существует (благодаря v-if)
     const items = [
         {
-            to: "/objects",
-            label: "Объекты",
+            to: "/projects",
+            label: "Проекты",
             separator: true,
             icon: 'i-lucide-box',
         },
     ]
     if (category_id.value !== undefined && data.value["category_name"]) {
-        items.push({ to: `/objects/?category_id=${category_id.value}`, label: data.value["category_name"], separator: true })
+        items.push({ to: `/projects/?category_id=${category_id.value}`, label: data.value["category_name"], separator: true })
     }
     return items
 })
@@ -88,15 +88,15 @@ watch(paginationPageNumber, () => {
                         <template #title>
                             <LayoutTitle class="text-xl grow font-bold">
                                 <NuxtLink class="navbar-brand hover:underline underline-offset-4"
-                                    :to="'/objects/' + item.object.id">{{ item.object.title }}</NuxtLink>
+                                    :to="'/projects/' + item.project.id">{{ item.project.title }}</NuxtLink>
 
                             </LayoutTitle>
                             <LayoutBadges class="bg-gray-100 text-gray-600" v-if="item.comments_count">
                                 <Icon name="i-lucide:message-circle" /> {{ item.comments_count }}
                             </LayoutBadges>
-                            <LayoutPrice class="">
+                            <!-- <LayoutPrice class="">
                                 <Icon name="i-lucide:dollar-sign" /> {{ item.object.price.toLocaleString('ru-RU') }}
-                            </LayoutPrice>
+                            </LayoutPrice> -->
                         </template>
 
                         <template #description>
@@ -115,23 +115,17 @@ watch(paginationPageNumber, () => {
                                         <div class="flex flex-row">
 
                                             <LayoutBadgesParams>
-                                                {{ item.city.title }}
+                                                {{ item.geo.name }}
                                             </LayoutBadgesParams>
                                         </div>
                                         <div class="flex flex-row">
 
                                             <LayoutBadgesParams>
-                                                {{ item.transaction.title }}
-                                            </LayoutBadgesParams>
-                                        </div>
-                                        <div class="flex flex-row">
-
-                                            <LayoutBadgesParams>
-                                                {{ item.category.title }}
+                                                {{ item.category.name }}
                                             </LayoutBadgesParams>
                                         </div>
                                     </div>
-                                    <div>{{ item.object.description.slice(0, 300) }}</div>
+                                    <div>{{ item.project.description.slice(0, 300) }}</div>
 
                                 </div>
                             </div>
@@ -153,7 +147,7 @@ watch(paginationPageNumber, () => {
                                 <div class="flex flex-row">
 
                                     <LayoutBadgesParams>
-                                        {{ item.object.created_at?.replace('T', ' ').split('.')[0] || '' }}
+                                        {{ item.project.created_at?.replace('T', ' ').split('.')[0] || '' }}
                                     </LayoutBadgesParams>
                                 </div>
                             </div>
@@ -182,9 +176,9 @@ watch(paginationPageNumber, () => {
                             <div v-if="pendingStat">Загрузка глобальных данных...</div>
                             <div v-else-if="errorStat">Ошибка загрузки глобальных данных</div>
                             <div v-else>
-                                <div class="flex flex-row justify-between py-1" v-for="item in statData.cities"
+                                <div class="flex flex-row justify-between py-1" v-for="item in statData.geos"
                                     :key="item.id">
-                                    <div>{{ item.city }}</div>
+                                    <div>{{ item.geo }}</div>
                                     <div>{{ item.count }}</div>
                                 </div>
                             </div>
@@ -207,22 +201,7 @@ watch(paginationPageNumber, () => {
                         </template>
                     </LayoutCardHorizontal>
 
-                    <LayoutCardHorizontal>
-                        <template #title>
-                            <LayoutTitle class="text-xl font-bold">По типам предложений</LayoutTitle>
-                        </template>
-                        <template #description>
-                            <div v-if="pendingStat">Загрузка глобальных данных...</div>
-                            <div v-else-if="errorStat">Ошибка загрузки глобальных данных</div>
-                            <div v-else>
-                                <div class="flex flex-row justify-between py-1" v-for="item in statData.transactions"
-                                    :key="item.id">
-                                    <div>{{ item.transaction }}</div>
-                                    <div>{{ item.count }}</div>
-                                </div>
-                            </div>
-                        </template>
-                    </LayoutCardHorizontal>
+
                 </LayoutSidebarRight>
             </div>
         </div>

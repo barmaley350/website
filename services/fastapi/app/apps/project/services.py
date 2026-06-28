@@ -2,22 +2,21 @@
 from typing import Any
 
 from app.apps import models
-from app.apps.object.repositories import ObjectRepository
+from app.apps.project.repositories import ProjectRepository
 
 
-class ObjectService:
-    def __init__(self, repo: ObjectRepository):
+class ProjectService:
+    def __init__(self, repo: ProjectRepository):
         self.repo = repo
 
-    async def get_objects_related(self, obj: models.Object) -> dict[str, Any]:
-        rows = await self.repo.get_similar_objects(obj=obj)
+    async def get_projects_related(self, obj: models.Project) -> dict[str, Any]:
+        rows = await self.repo.get_similar_projects(obj=obj)
         renamed_rows = [
             {
-                "object": r["Object"],
+                "project": r["Project"],
                 "user": r["User"],
-                "city": r["City"],
+                "geo": r["Geo"],
                 "category": r["Category"],
-                "transaction": r["Transaction"],
                 "comments_count": r["comments_count"],
             }
             for r in rows
@@ -27,39 +26,37 @@ class ObjectService:
             "results": renamed_rows,
         }
 
-    async def get_object(self, object_id: int) -> dict[str, Any]:
-        """Собирает все данные для ответа на запрос GET /objects/{object_id}.
+    async def get_project(self, project_id: int) -> dict[str, Any]:
+        """Собирает все данные для ответа на запрос GET /projects/{project_id}.
 
         Возвращает словарь, который можно сразу отдать как JSON.
         """
         # # Количество комментариев
 
-        obj = await self.repo.get_object_by_id(object_id)
-        rows = await self.repo.get_object(obj=obj)
+        obj = await self.repo.get_project_by_id(project_id)
+        rows = await self.repo.get_project(obj=obj)
 
         # Похожие объекты
         # similar_objects = await self.get_similar_objects(obj)
 
         return {
-            "object": rows["Object"],
+            "project": rows["Project"],
             "user": rows["User"],
-            "city": rows["City"],
+            "geo": rows["Geo"],
             "category": rows["Category"],
-            "transaction": rows["Transaction"],
             "comments_count": rows["comments_count"],
-            # "similar_objects": None,
         }
 
-    async def get_objects(
+    async def get_projects(
         self,
         *,
         page: int = 1,
         limit: int = 10,
         filters: dict[str, Any],
     ) -> dict[str, Any]:
-        """Формирует ответ для GET /objects/.
+        """Формирует ответ для GET /projects/.
 
-        Формирует ответ для GET /objects/:
+        Формирует ответ для GET /projects/:
         - общее количество (count)
         - список объектов с данными и числом комментариев
         - имя и ID категории (если фильтр задан)
@@ -67,13 +64,13 @@ class ObjectService:
         offset = (page - 1) * limit
 
         # Получаем общее количество (для пагинации)
-        total = await self.repo.get_objects_count(filters)
+        total = await self.repo.get_projects_count(filters)
 
         # Если задан category_id, получаем его название
         category_name = await self.repo.get_category_name_by_id(filters)
 
         # Получаем сами объекты
-        rows = await self.repo.get_objects(
+        rows = await self.repo.get_projects(
             filters=filters,
             offset=offset,
             limit=limit,
@@ -81,11 +78,10 @@ class ObjectService:
 
         renamed_rows = [
             {
-                "object": r["Object"],
+                "project": r["Project"],
                 "user": r["User"],
-                "city": r["City"],
+                "geo": r["Geo"],
                 "category": r["Category"],
-                "transaction": r["Transaction"],
                 "comments_count": r["comments_count"],
             }
             for r in rows
@@ -98,6 +94,6 @@ class ObjectService:
             "category_id": filters.get("category_id") if filters else None,
         }
 
-    async def get_object_by_id(self, object_id: int) -> models.Object | None:
+    async def get_project_by_id(self, project_id: int) -> models.Project | None:
         """Получает объект по его ID или None, если не найден."""
-        return await self.repo.get_object_by_id(object_id)
+        return await self.repo.get_project_by_id(project_id)

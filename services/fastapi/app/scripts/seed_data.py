@@ -6,7 +6,7 @@ import typer
 from faker import Faker
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.apps.models import Category, City, Comment, Object, Transaction, User
+from app.apps.models import Category, Comment, Geo, Project, User
 from app.core.dependencies import db
 from app.core.settings import Base
 
@@ -31,21 +31,26 @@ def seed(
     count_users: int = typer.Option(
         10, "--users", "-u", help="Количество пользователей"
     ),
-    count_obj: int = typer.Option(50, "--obj", "-o", help="Количество объектов"),
+    count_projects: int = typer.Option(
+        50, "--projects", "-p", help="Количество проектов"
+    ),
     count_comments: int = typer.Option(
         50, "--comments", "-c", help="Количество комментариев"
     ),
     drop_first: bool = typer.Option(
-        False, "--drop", help="Очистить таблицы перед заполнением"
+        False,
+        "--drop",
+        help="Очистить таблицы перед заполнением",
+        show_default=True,
     ),
 ):
-    asyncio.run(async_seed(count_users, count_obj, count_comments, drop_first))
+    asyncio.run(async_seed(count_users, count_projects, count_comments, drop_first))
 
 
 # Вся асинхронная работа здесь
 async def async_seed(
     count_users: int,
-    count_obj: int,
+    count_projects: int,
     count_comments: int,
     drop_first: bool,
 ):
@@ -70,36 +75,28 @@ async def async_seed(
             "Виллы",
         ]
         categories = [
-            Category(title=title, description=fake.text(100))
-            for title in categories_data
+            Category(name=name, description=fake.text(100)) for name in categories_data
         ]
         session.add_all(categories)
         await session.commit()
 
-        # --- 2. Transactions ---
-        transactions_data = ["Продам", "Сдам"]
-        transactions = [
-            Transaction(title=t, description=fake.text(100)) for t in transactions_data
-        ]
-        session.add_all(transactions)
-        await session.commit()
+        # # --- 2. Transactions ---
+        # transactions_data = ["Продам", "Сдам"]
+        # transactions = [
+        #     Transaction(title=t, description=fake.text(100)) for t in transactions_data
+        # ]
+        # session.add_all(transactions)
+        # await session.commit()
 
         # --- 3. Cities ---
-        cities_data = [
-            "Thalang",
-            "Вичит",
-            "Карон (Karon)",
-            "Кату (Kathu)",
-            "Ко Каев (Ko Kaeo)",
-            "Патонг (Patong)",
-            "Раваи (Rawai)",
-            "Талат Нуэа",
-            "Талат Яй",
-            "Тхаланг",
-            "Чалонг (Chalong)",
+        geos_data = [
+            "Москва",
+            "РФ",
+            "Мир",
+            "Санкт-Петербург",
         ]
-        cities = [City(title=c, description=fake.text(100)) for c in cities_data]
-        session.add_all(cities)
+        geos = [Geo(name=c) for c in geos_data]
+        session.add_all(geos)
         await session.commit()
 
         # --- 4. Users ---
@@ -119,45 +116,43 @@ async def async_seed(
         print()
 
         # --- 5. Objects ---
-        objs = []
-        for i in range(count_obj):
+        projects = []
+        for i in range(count_projects):
             date = fake.date_time_between(start_date="-1y", end_date="now")
-            obj = Object(
+            project = Project(
                 title=fake.text(100),
                 description=fake.text(1000),
-                price=random.randint(10000, 1000000),
                 is_active=True,
                 category_id=categories[random.randint(0, len(categories) - 1)].id,
-                city_id=cities[random.randint(0, len(cities) - 1)].id,
+                geo_id=geos[random.randint(0, len(geos) - 1)].id,
                 user_id=users[random.randint(0, len(users) - 1)].id,
-                transaction_id=transactions[
-                    random.randint(0, len(transactions) - 1)
-                ].id,
                 created_at=date,
             )
-            objs.append(obj)
-            process(i + 1, "Object")
+            projects.append(project)
+            process(i + 1, "Project")
 
-        session.add_all(objs)
+        session.add_all(projects)
         await session.commit()
         print()
 
         # --- 6. Comments ---
         comments_data_list = []
         comments_count = 0
-        sample_size = max(1, len(objs) // 3)
+        sample_size = max(1, len(projects) // 3)
 
-        sampled_objs = random.sample(objs, sample_size)
+        sampled_projects = random.sample(projects, sample_size)
 
-        for obj in sampled_objs:
+        for project in sampled_projects:
             for _ in range(random.randint(1, count_comments)):
                 owner = users[random.randint(0, len(users) - 1)]
-                date = fake.date_time_between(start_date=obj.created_at, end_date="now")
+                date = fake.date_time_between(
+                    start_date=project.created_at, end_date="now"
+                )
 
                 comments_data_list.append({
                     "content": fake.text(100),
                     "user_id": owner.id,
-                    "object_id": obj.id,
+                    "project_id": project.id,
                     "created_at": date,
                 })
                 comments_count += 1

@@ -21,7 +21,7 @@ seed_data() {
     clear
     cd $ROOT_DIR
     cd $FASTAPI_DIR 
-    read -p "Введите параметры ( --drop -u 10 -o 10000 -c 200) / --help для справки: " params
+    read -p "Введите параметры ( --drop -u 10 -p 10000 -c 200) / --help для справки: " params
     docker exec -it $DOCKER_BACKEND_CONTAINER uv run python3 -m app.scripts.seed_data $params
 }
 

@@ -31,6 +31,6 @@ async def handle_multiple_results(request: Request, exc: MultipleResultsFound):
     )
 
 
-app.include_router(routers.flats)
+app.include_router(routers.project)
 app.include_router(routers.main)
 app.include_router(routers.stat)
