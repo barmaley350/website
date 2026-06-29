@@ -60,5 +60,3 @@ docker-compose.override.yml
 # Сгенерированная документация
 docs/_build/
 site/
-
-app/db/alembic/versions/*
