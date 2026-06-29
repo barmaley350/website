@@ -10,26 +10,17 @@ const props = defineProps({
 <template>
     <div class="flex flex-col gap-3" :class="class">
         <div class="flex flex-col border border-gray-100 rounded-sm dark:border-gray-600 h-full">
-            <div v-if="$slots.image" class="border-b border-gray-300 dark:border-gray-600">
-                <slot name="image" />
-            </div>
-            <div v-if="$slots.title" class="flex flex-row p-2 bg-brand-100 rounded-t-sm dark:bg-gray-700">
+            <div v-if="$slots.title"
+                class="flex flex-row p-5 border-b border-b-gray-100 bg-brand-50 rounded-t-sm dark:bg-gray-700 dark:border-b-gray-600">
                 <slot name="title" />
             </div>
-            <div v-if="$slots.author" class="p-3 border-b border-gray-300 dark:border-gray-600">
-                <slot name="author" />
+            <div v-if="$slots.header" class=" p-3 border-b border-b-gray-100 dark:border-b-gray-600">
+                <slot name="header" />
             </div>
-            <div class="p-3">
+            <div v-if="$slots.description" class=" p-3 border-b border-b-gray-100 dark:border-b-gray-600">
                 <slot name="description" />
             </div>
-            <div v-if="$slots.fields" class="p-3 border-t border-t-gray-300 dark:border-t-gray-600">
-                <slot name="fields" />
-            </div>
-            <div v-if="$slots.button" class="p-3 border-t border-t-gray-300 dark:border-t-gray-600">
-                <slot name="button" />
-            </div>
-            <div v-if="$slots.footer"
-                class="border-t border-gray-200 dark:bg-gray-900 dark:border-t-gray-600 p-3 rounded-b-sm">
+            <div v-if="$slots.footer" class="p-3 rounded-b-sm">
                 <slot name="footer" />
             </div>
         </div>

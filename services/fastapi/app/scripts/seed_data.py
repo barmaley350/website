@@ -174,7 +174,8 @@ async def async_seed(
         project_teams_objects = []
         for project in projects:
             # каждый пользователь получает случайное количество навыков от 1 до len(skills)
-            num_teams = random.randint(1, len(users))
+            # len_user = len(users) if len(users) <= 5 else 5
+            num_teams = random.randint(1, 7)
             chosen_users = random.sample(users, num_teams)
             for user in chosen_users:
                 project_team = ProjectTeam(project_id=project.id, user_id=user.id)

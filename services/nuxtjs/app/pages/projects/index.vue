@@ -68,10 +68,7 @@ watch(paginationPageNumber, () => {
     // or instant: window.scrollTo(0, 0)
 })
 
-// if (filters.value.category_id !== category_id.value) {
-//     setFilter('category_id', category_id.value)
-//     paginationPageNumber.value = 1
-// }
+
 </script>
 <template>
     <div class="flex flex-col gap-3">
@@ -80,82 +77,66 @@ watch(paginationPageNumber, () => {
             <UPagination v-model:page="paginationPageNumber" :total="countFlats"
                 :to="(page) => ({ query: { page, category_id: category_id } })" />
         </div>
-
         <div class="grid grid-cols-12 gap-5">
             <div class="col-span-9">
                 <div class="flex flex-col gap-10" v-if="data">
-                    <LayoutCardHorizontal v-for="item in data.results">
+                    <LayoutCardHorizontal v-for="item in data.results" :key="JSON.stringify(item)">
                         <template #title>
-                            <LayoutTitle class="text-xl grow font-bold">
+                            <LayoutTitle class=" text-xl grow font-bold">
                                 <NuxtLink class="navbar-brand hover:underline underline-offset-4"
                                     :to="'/projects/' + item.project.id">{{ item.project.title }}</NuxtLink>
-
                             </LayoutTitle>
                             <LayoutBadges class="" v-if="item.comments_count">
                                 <Icon name="i-lucide:message-circle" /> {{ item.comments_count }}
                             </LayoutBadges>
-                            <!-- <LayoutPrice class="">
-                                <Icon name="i-lucide:dollar-sign" /> {{ item.object.price.toLocaleString('ru-RU') }}
-                            </LayoutPrice> -->
                         </template>
-
+                        <template #header>
+                            <div class="flex flex-row justify-between text-xl gap-x-3">
+                                <div class="flex flex-row">
+                                    <LayoutBadgesParams class="flex flex-row items-center gap-1 text-sm">
+                                        <div class="font-bold">Добавлен</div>
+                                        <LayoutHumanDate :date="item.project.created_at" />
+                                    </LayoutBadgesParams>
+                                    <LayoutBadgesParams class="flex flex-row items-center gap-1 text-sm">
+                                        <div class="font-bold">Последня активность</div>
+                                        <LayoutHumanDate :date="item.project.created_at" />
+                                    </LayoutBadgesParams>
+                                </div>
+                                <div class="flex flex-row gap-1" v-if="item.team_users">
+                                    <LayoutBadgesParams class="text-sm">Команда</LayoutBadgesParams>
+                                    <UAvatarGroup :max="3">
+                                        <UAvatar :src="`http://localhost:1338/img2/${getRandomFlatNumber()}.jpg`"
+                                            :alt="user.name" v-for="user in item.team_users" :key="user.id" />
+                                    </UAvatarGroup>
+                                </div>
+                            </div>
+                        </template>
                         <template #description>
-                            <div class="grid grid-cols-3 gap-3">
-
-                                <div class="">
-                                    <div class="flex justify-start">
-                                        <div class="w-64">
-                                            <img class=" h-full w-full object-cover rounded-lg"
-                                                :src="`http://localhost:1338/img2/${getRandomFlatNumber()}.jpg`">
-                                        </div>
-                                    </div>
+                            <div>{{ item.project.description.slice(0, 300) }}</div>
+                        </template>
+                        <!-- <template #footer>
+                            <div class="flex flex-row justify-between text-xl gap-x-3">
+                                <div class="flex flex-row">
+                                    <LayoutBadgesParams>
+                                        Добавлен -
+                                        <LayoutHumanDate :date="item.project.created_at" />
+                                    </LayoutBadgesParams>
+                                    <LayoutBadgesParams>
+                                        Активность -
+                                        <LayoutHumanDate :date="item.project.created_at" />
+                                    </LayoutBadgesParams>
                                 </div>
-                                <div class="flex flex-col col-span-2 gap-5">
-                                    <div class="flex flex-row justify-start text-xl gap-x-3">
-                                        <div class="flex flex-row">
-
-                                            <LayoutBadgesParams>
-                                                {{ item.geo.name }}
-                                            </LayoutBadgesParams>
-                                        </div>
-                                        <div class="flex flex-row">
-
-                                            <LayoutBadgesParams>
-                                                {{ item.category.name }}
-                                            </LayoutBadgesParams>
-                                        </div>
-                                    </div>
-                                    <div>{{ item.project.description.slice(0, 300) }}</div>
-
+                                <div class="flex flex-row gap-1" v-if="item.team_users">
+                                    <LayoutBadgesParams>Команда</LayoutBadgesParams>
+                                    <UAvatarGroup :max="3">
+                                        <UAvatar :src="`http://localhost:1338/img2/${getRandomFlatNumber()}.jpg`"
+                                            :alt="user.name" v-for="user in item.team_users" :key="user.id" />
+                                    </UAvatarGroup>
                                 </div>
                             </div>
-                        </template>
-                        <template #footer>
-                            <div class="flex flex-row justify-end text-xl gap-x-3">
-                                <div class="flex flex-row">
-
-                                    <LayoutBadgesParams>
-                                        {{ item.user.email }}
-                                    </LayoutBadgesParams>
-                                </div>
-                                <div class="flex flex-row">
-
-                                    <LayoutBadgesParams>
-                                        {{ item.user.phone }}
-                                    </LayoutBadgesParams>
-                                </div>
-                                <div class="flex flex-row">
-
-                                    <LayoutBadgesParams>
-                                        {{ item.project.created_at?.replace('T', ' ').split('.')[0] || '' }}
-                                    </LayoutBadgesParams>
-                                </div>
-                            </div>
-
-                        </template>
+                        </template> -->
                     </LayoutCardHorizontal>
                 </div>
-
             </div>
             <div class="col-span-3">
                 <LayoutSidebarRight>
@@ -165,7 +146,6 @@ watch(paginationPageNumber, () => {
                                 <div class="text-2xl">Всего объектов</div>
                                 <div class="text-2xl font-bold">{{ countFlats.toLocaleString('ru-RU') }}</div>
                             </div>
-
                         </template>
                     </LayoutCardHorizontal>
                     <LayoutCardHorizontal>
@@ -200,8 +180,6 @@ watch(paginationPageNumber, () => {
                             </div>
                         </template>
                     </LayoutCardHorizontal>
-
-
                 </LayoutSidebarRight>
             </div>
         </div>
