@@ -61,4 +61,4 @@ docker-compose.override.yml
 docs/_build/
 site/
 
-app/db/alembic/versions
+app/db/alembic/versions/*
