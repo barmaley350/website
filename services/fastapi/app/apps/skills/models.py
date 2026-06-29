@@ -18,7 +18,7 @@ class UserSkill(Base):
     skill_id: Mapped[int] = mapped_column(ForeignKey("skills.id"), primary_key=True)
 
     # Связи к основным сущностям
-    user: Mapped[User] = relationship(back_populates="user_skills")
+    user: Mapped[User] = relationship(back_populates="skills")
     skill: Mapped[Skill] = relationship(back_populates="user_skills")
 
 
@@ -27,7 +27,7 @@ class ProjectSkill(Base):
     project_id: Mapped[int] = mapped_column(ForeignKey("project.id"), primary_key=True)
     skill_id: Mapped[int] = mapped_column(ForeignKey("skills.id"), primary_key=True)
 
-    project: Mapped[Project] = relationship(back_populates="project_skills")
+    project: Mapped[Project] = relationship(back_populates="skills")
     skill: Mapped[Skill] = relationship(back_populates="project_skills")
 
 
@@ -39,7 +39,7 @@ class Skill(Base):
     name: Mapped[str] = mapped_column(unique=True, nullable=True, index=True)
 
     user_skills: Mapped[list[UserSkill]] = relationship(back_populates="skill")
-    users = association_proxy("user_skills", "user")
+    # users = association_proxy("user_skills", "user")
 
     project_skills: Mapped[list[ProjectSkill]] = relationship(back_populates="skill")
-    projects = association_proxy("project_skills", "project")
+    # projects = association_proxy("project_skills", "project")

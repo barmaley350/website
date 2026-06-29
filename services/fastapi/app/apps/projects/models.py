@@ -12,13 +12,14 @@ if TYPE_CHECKING:
     from app.apps.models import Category, Geo, ProjectSkill, User
 
 
-# class ProjectSkill(Base):
-#     __tablename__ = "project_skills"
-#     project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), primary_key=True)
-#     skill_id: Mapped[int] = mapped_column(ForeignKey("skills.id"), primary_key=True)
+class ProjectTeam(Base):
+    __tablename__ = "project_teams"
+    project_id: Mapped[int] = mapped_column(ForeignKey("project.id"), primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), primary_key=True)
 
-#     project: Mapped["Project"] = relationship(back_populates="project_skills")
-#     skill: Mapped["Skill"] = relationship(back_populates="project_skills")
+    # Связи к основным сущностям
+    user: Mapped[User] = relationship(back_populates="teams")
+    project: Mapped[Project] = relationship(back_populates="teams")
 
 
 # FIX description_full -> False
@@ -39,8 +40,9 @@ class Project(Base):
     )
     created_at: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
 
-    project_skills: Mapped[list[ProjectSkill]] = relationship(back_populates="project")
-    skills = association_proxy("project_skills", "skill")
+    skills: Mapped[list[ProjectSkill]] = relationship(back_populates="project")
+    # skills = association_proxy("project_skills", "skill")
+    teams: Mapped[list[ProjectTeam]] = relationship(back_populates="project")
 
     # Связи
     user: Mapped[User] = relationship("User", backref="projects")

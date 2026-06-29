@@ -85,7 +85,7 @@ class ProjectRepository:
         filters: dict[str, str],
         offset: int = 0,
         limit: int = 10,
-    ) -> list[RowMapping]:
+    ): #-> list[RowMapping]:
         """Возвращает список объектов с пагинацией.
 
         Возвращает список объектов с пагинацией фильтром по категории,
@@ -147,7 +147,38 @@ class ProjectRepository:
         )
 
         stmt = self.make_filters(filters=filters, stmt=stmt)
-        return list((await self.session.execute(stmt)).mappings().all())
+        rows = list((await self.session.execute(stmt)).mappings().all())
+
+# ---------
+# 2. Загружаем пользователей команды для всех проектов
+        if not rows:
+            return rows
+
+        result_rows = [dict(row) for row in rows]
+        project_ids = [row["Project"].id for row in rows]
+        team_stmt = (
+            select(
+                models.ProjectTeam.project_id,
+                models.User,
+            )
+            .join(models.User, models.ProjectTeam.user_id == models.User.id)
+            .where(models.ProjectTeam.project_id.in_(project_ids))
+        )
+        team_result = await self.session.execute(team_stmt)
+
+        # Группируем пользователей по project_id
+        team_users_map: dict[int, list[models.User]] = {}
+        for project_id, user in team_result:
+            team_users_map.setdefault(project_id, []).append(user)
+
+        # 3. Добавляем team_users в каждую строку
+        for row_dict in result_rows:
+            project_id = row_dict["Project"].id
+            users = team_users_map.get(project_id, [])
+            row_dict["team_users"] = users  # теперь можно присваивать
+
+        return result_rows
+
 
     async def get_project(
         self,

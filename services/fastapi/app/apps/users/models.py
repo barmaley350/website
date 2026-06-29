@@ -9,17 +9,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.core.settings import Base
 
 if TYPE_CHECKING:
-    from app.apps.models import UserSkill
-
-
-# class UserSkill(Base):
-#     __tablename__ = "user_skills"
-#     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), primary_key=True)
-#     skill_id: Mapped[int] = mapped_column(ForeignKey("skills.id"), primary_key=True)
-
-#     # Связи к основным сущностям
-#     user: Mapped["User"] = relationship(back_populates="user_skills")
-#     skill: Mapped["Skill"] = relationship(back_populates="user_skills")
+    from app.apps.models import ProjectTeam, UserSkill
 
 
 class User(Base):
@@ -33,5 +23,6 @@ class User(Base):
     description: Mapped[str | None] = mapped_column(String, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
-    user_skills: Mapped[list[UserSkill]] = relationship(back_populates="user")
-    skills = association_proxy("user_skills", "skill")
+    skills: Mapped[list[UserSkill]] = relationship(back_populates="user")
+    teams: Mapped[list[ProjectTeam]] = relationship(back_populates="user")
+    # skills = association_proxy("user_skills", "skill")

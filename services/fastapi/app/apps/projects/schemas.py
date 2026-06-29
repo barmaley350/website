@@ -35,6 +35,7 @@ class ProjectResponseWithRelations(BaseModel):
     comments_count: int | None = None
     user_skills: list[str] | None = None
     project_skills: list[str] | None = None
+    team_users: list[UserResponse] | None = None
 
     class Config:
         from_attributes = True  # раньше orm_mode

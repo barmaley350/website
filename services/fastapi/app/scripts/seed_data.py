@@ -11,6 +11,7 @@ from app.apps.models import (
     Geo,
     Project,
     ProjectSkill,
+    ProjectTeam,
     Skill,
     User,
     UserSkill,
@@ -166,6 +167,20 @@ async def async_seed(
                 project_skills_objects.append(project_skill)
             process(len(project_skills_objects), "ProjectSkill")
         session.add_all(project_skills_objects)
+        await session.commit()
+        print()
+
+        # --- Project Teams ---
+        project_teams_objects = []
+        for project in projects:
+            # каждый пользователь получает случайное количество навыков от 1 до len(skills)
+            num_teams = random.randint(1, len(users))
+            chosen_users = random.sample(users, num_teams)
+            for user in chosen_users:
+                project_team = ProjectTeam(project_id=project.id, user_id=user.id)
+                project_teams_objects.append(project_team)
+            process(len(project_teams_objects), "ProjectTeam")
+        session.add_all(project_teams_objects)
         await session.commit()
         print()
 

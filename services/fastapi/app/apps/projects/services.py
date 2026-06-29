@@ -85,6 +85,7 @@ class ProjectService:
                 "comments_count": r["comments_count"],
                 "user_skills": r["user_skills"],
                 "project_skills": r["project_skills"],
+                "team_users": r["team_users"],
             }
             for r in rows
         ]
