@@ -91,19 +91,20 @@ watch(paginationPageNumber, () => {
                             </LayoutBadges>
                         </template>
                         <template #header>
-                            <div class="flex flex-row justify-between text-xl gap-x-3">
-                                <div class="flex flex-row">
-                                    <LayoutBadgesParams class="flex flex-row items-center gap-1 text-sm">
-                                        <div class="font-bold">Добавлен</div>
+                            <div class="flex flex-row justify-between text-sm gap-x-3">
+                                <div class="flex flex-row items-center gap-1">
+                                    <div class="font-bold text-gray-400">Добавлен</div>
+                                    <LayoutBadgesParams class="flex flex-row items-center gap-1 text-sm p-1">
                                         <LayoutHumanDate :date="item.project.created_at" />
                                     </LayoutBadgesParams>
-                                    <LayoutBadgesParams class="flex flex-row items-center gap-1 text-sm">
-                                        <div class="font-bold">Последня активность</div>
+                                    <div class="font-bold text-gray-400">Последня активность</div>
+                                    <LayoutBadgesParams class="flex flex-row items-center gap-1 text-sm p-1">
                                         <LayoutHumanDate :date="item.project.created_at" />
                                     </LayoutBadgesParams>
                                 </div>
-                                <div class="flex flex-row gap-1" v-if="item.team_users">
-                                    <LayoutBadgesParams class="text-sm">Команда</LayoutBadgesParams>
+                                <div class="flex flex-row items-center gap-1" v-if="item.team_users">
+                                    <!-- <LayoutBadgesParams class="text-sm">Команда</LayoutBadgesParams> -->
+                                    <div class="font-bold text-gray-400">Команда</div>
                                     <UAvatarGroup :max="3">
                                         <UAvatar :src="`http://localhost:1338/img2/${getRandomFlatNumber()}.jpg`"
                                             :alt="user.name" v-for="user in item.team_users" :key="user.id" />
@@ -114,27 +115,17 @@ watch(paginationPageNumber, () => {
                         <template #description>
                             <div>{{ item.project.description.slice(0, 300) }}</div>
                         </template>
-                        <!-- <template #footer>
-                            <div class="flex flex-row justify-between text-xl gap-x-3">
-                                <div class="flex flex-row">
-                                    <LayoutBadgesParams>
-                                        Добавлен -
-                                        <LayoutHumanDate :date="item.project.created_at" />
-                                    </LayoutBadgesParams>
-                                    <LayoutBadgesParams>
-                                        Активность -
-                                        <LayoutHumanDate :date="item.project.created_at" />
+                        <template #footer>
+                            <div class="flex flex-row justify-between text-sm gap-x-3">
+                                <div class="flex flex-row items-center">
+                                    <div class="font-bold text-gray-400">Стек</div>
+                                    <LayoutBadgesParams v-for="skill in item.project_skills" :key="JSON.stringify(skill)" class="flex flex-row items-center gap-1 text-sm p-1">
+                                        {{ skill }}
                                     </LayoutBadgesParams>
                                 </div>
-                                <div class="flex flex-row gap-1" v-if="item.team_users">
-                                    <LayoutBadgesParams>Команда</LayoutBadgesParams>
-                                    <UAvatarGroup :max="3">
-                                        <UAvatar :src="`http://localhost:1338/img2/${getRandomFlatNumber()}.jpg`"
-                                            :alt="user.name" v-for="user in item.team_users" :key="user.id" />
-                                    </UAvatarGroup>
-                                </div>
+
                             </div>
-                        </template> -->
+                        </template>
                     </LayoutCardHorizontal>
                 </div>
             </div>
