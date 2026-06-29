@@ -19,6 +19,7 @@ class ProjectResponse(BaseModel):
     id: int
     title: str
     description: str
+    description_full: str | None
     is_active: bool
     category_id: int
     geo_id: int
@@ -32,6 +33,8 @@ class ProjectResponseWithRelations(BaseModel):
     geo: GeoResponse
     category: CategoryResponse
     comments_count: int | None = None
+    user_skills: list[str] | None = None
+    project_skills: list[str] | None = None
 
     class Config:
         from_attributes = True  # раньше orm_mode

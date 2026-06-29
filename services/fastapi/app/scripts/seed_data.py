@@ -4,9 +4,17 @@ from contextlib import asynccontextmanager
 
 import typer
 from faker import Faker
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.apps.models import Category, Comment, Geo, Project, User
+from app.apps.models import (
+    Category,
+    Comment,
+    Geo,
+    Project,
+    ProjectSkill,
+    Skill,
+    User,
+    UserSkill,
+)
 from app.core.dependencies import db
 from app.core.settings import Base
 
@@ -80,13 +88,11 @@ async def async_seed(
         session.add_all(categories)
         await session.commit()
 
-        # # --- 2. Transactions ---
-        # transactions_data = ["Продам", "Сдам"]
-        # transactions = [
-        #     Transaction(title=t, description=fake.text(100)) for t in transactions_data
-        # ]
-        # session.add_all(transactions)
-        # await session.commit()
+        # --- 2. Skills ---
+        skills_data = ["python3", "sql", "clickhouse", "fastapi"]
+        skills = [Skill(name=name) for name in skills_data]
+        session.add_all(skills)
+        await session.commit()
 
         # --- 3. Cities ---
         geos_data = [
@@ -95,7 +101,7 @@ async def async_seed(
             "Мир",
             "Санкт-Петербург",
         ]
-        geos = [Geo(name=c) for c in geos_data]
+        geos = [Geo(name=name) for name in geos_data]
         session.add_all(geos)
         await session.commit()
 
@@ -112,6 +118,20 @@ async def async_seed(
             process(i + 1, "User")
 
         session.add_all(users)
+        await session.commit()
+        print()
+
+        # --- User Skills ---
+        user_skills_objects = []
+        for user in users:
+            # каждый пользователь получает случайное количество навыков от 1 до len(skills)
+            num_skills = random.randint(1, len(skills))
+            chosen_skills = random.sample(skills, num_skills)
+            for skill in chosen_skills:
+                user_skill = UserSkill(user_id=user.id, skill_id=skill.id)
+                user_skills_objects.append(user_skill)
+            process(len(user_skills_objects), "UserSkill")
+        session.add_all(user_skills_objects)
         await session.commit()
         print()
 
@@ -132,6 +152,20 @@ async def async_seed(
             process(i + 1, "Project")
 
         session.add_all(projects)
+        await session.commit()
+        print()
+
+        # --- Project Skills ---
+        project_skills_objects = []
+        for project in projects:
+            # каждый пользователь получает случайное количество навыков от 1 до len(skills)
+            num_skills = random.randint(1, len(skills))
+            chosen_skills = random.sample(skills, num_skills)
+            for skill in chosen_skills:
+                project_skill = ProjectSkill(user_id=project.id, skill_id=skill.id)
+                project_skills_objects.append(project_skill)
+            process(len(project_skills_objects), "ProjectSkill")
+        session.add_all(project_skills_objects)
         await session.commit()
         print()
 

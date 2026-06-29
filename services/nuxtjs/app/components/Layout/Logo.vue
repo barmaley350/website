@@ -1,3 +1,5 @@
 <template>
-    <div class="font-bold">LOGO</div>
+    <div class="font-bold">
+        <NuxtLink :to="'/'">LOGO</NuxtLink>
+    </div>
 </template>

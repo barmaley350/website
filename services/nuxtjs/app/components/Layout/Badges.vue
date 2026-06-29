@@ -1,5 +1,15 @@
 <template>
-    <div class="text-gray-500 rounded-sm text-2xl text-nowrap ml-1 px-3 content-center">
+    <div class="text-brand-800
+     dark:text-brand-100 
+     font-bold
+     rounded-sm 
+     text-2xl 
+     text-nowrap 
+     ml-5
+     px-5
+     flex items-center
+     gap-2
+     ">
         <slot />
     </div>
 </template>

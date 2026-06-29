@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING
 from sqlalchemy import DateTime, ForeignKey, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-if TYPE_CHECKING:
-    from app.apps.project.models import Project
-    from app.apps.user.models import User
 from app.core.settings import Base
+
+if TYPE_CHECKING:
+    from app.apps.models import Project, User
 
 
 class Comment(Base):

@@ -91,7 +91,7 @@ watch(paginationPageNumber, () => {
                                     :to="'/projects/' + item.project.id">{{ item.project.title }}</NuxtLink>
 
                             </LayoutTitle>
-                            <LayoutBadges class="bg-gray-100 text-gray-600" v-if="item.comments_count">
+                            <LayoutBadges class="" v-if="item.comments_count">
                                 <Icon name="i-lucide:message-circle" /> {{ item.comments_count }}
                             </LayoutBadges>
                             <!-- <LayoutPrice class="">

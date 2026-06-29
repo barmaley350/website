@@ -13,37 +13,6 @@ class ProjectRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    # async def get_object_with_relations(
-    #     self, object_id: int
-    # ) -> tuple[
-    #     models.Object, models.User, models.City, models.Category, models.Transaction
-    # ]:
-    #     """Возвращает объект и все связанные сущности.
-
-    #     Если не найден или найдено несколько — выбрасывает исключения.
-    #     """
-    #     stmt = (
-    #         select(
-    #             models.Object,
-    #             models.User,
-    #             models.City,
-    #             models.Category,
-    #             models.Transaction,
-    #         )
-    #         .join(models.User, models.Object.user_id == models.User.id)
-    #         .join(models.City, models.Object.city_id == models.City.id)
-    #         .join(models.Category, models.Object.category_id == models.Category.id)
-    #         .join(
-    #             models.Transaction,
-    #             models.Object.transaction_id == models.Transaction.id,
-    #         )
-    #         .where(models.Object.id == object_id)
-    #     )
-
-    #     result = await self.session.execute(stmt)
-    #     obj, user, city, category, transaction = result.one()
-    #     return (obj, user, city, category, transaction)
-
     async def get_comments_count(self, project_id: int) -> int:
         """Количество комментариев к объекту."""
         stmt = select(func.count(models.Comment.id)).where(
@@ -131,6 +100,26 @@ class ProjectRepository:
             .subquery()
         )
 
+        # --- ПОДЗАПРОС ДЛЯ НАВЫКОВ ---
+        user_skills_subq = (
+            select(
+                models.UserSkill.user_id,
+                func.array_agg(models.Skill.name).label("user_skills"),
+            )
+            .join(models.Skill, models.UserSkill.skill_id == models.Skill.id)
+            .group_by(models.UserSkill.user_id)
+            .subquery()
+        )
+        # --- ПОДЗАПРОС ДЛЯ НАВЫКОВ ---
+        project_skills_subq = (
+            select(
+                models.ProjectSkill.user_id,
+                func.array_agg(models.Skill.name).label("project_skills"),
+            )
+            .join(models.Skill, models.ProjectSkill.skill_id == models.Skill.id)
+            .group_by(models.ProjectSkill.user_id)
+            .subquery()
+        )
         stmt = (
             select(
                 models.Project,
@@ -138,18 +127,25 @@ class ProjectRepository:
                 models.Geo,
                 models.Category,
                 func.coalesce(comments_subq.c.cnt, 0).label("comments_count"),
+                func.coalesce(user_skills_subq.c.user_skills, []).label("user_skills"),
+                func.coalesce(project_skills_subq.c.project_skills, []).label(
+                    "project_skills"
+                ),
             )
             .join(models.User, models.Project.user_id == models.User.id)
             .join(models.Geo, models.Project.geo_id == models.Geo.id)
             .join(models.Category, models.Project.category_id == models.Category.id)
             .outerjoin(comments_subq, models.Project.id == comments_subq.c.project_id)
+            .outerjoin(user_skills_subq, models.User.id == user_skills_subq.c.user_id)
+            .outerjoin(
+                project_skills_subq, models.User.id == project_skills_subq.c.user_id
+            )
             .order_by(models.Project.created_at.desc())
             .offset(offset)
             .limit(limit)
         )
 
         stmt = self.make_filters(filters=filters, stmt=stmt)
-
         return list((await self.session.execute(stmt)).mappings().all())
 
     async def get_project(

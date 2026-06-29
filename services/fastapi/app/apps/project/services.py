@@ -83,6 +83,8 @@ class ProjectService:
                 "geo": r["Geo"],
                 "category": r["Category"],
                 "comments_count": r["comments_count"],
+                "user_skills": r["user_skills"],
+                "project_skills": r["project_skills"],
             }
             for r in rows
         ]

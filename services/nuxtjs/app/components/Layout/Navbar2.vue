@@ -7,7 +7,7 @@ const items = computed(() => [
     {
         label: 'Проекты',
         to: '/projects',
-        active: route.path.startsWith('/docs/getting-started')
+        active: route.path.startsWith('/projects')
     },
     {
         label: 'Основатели',
@@ -17,12 +17,27 @@ const items = computed(() => [
     {
         label: 'Комментарии',
         to: 'https://go.nuxt.com/figma-ui',
-        target: '_blank'
+        //target: '_blank'
     },
     {
-        label: 'Releases',
+        label: 'Разработчики',
         to: 'https://github.com/nuxt/ui/releases',
-        target: '_blank'
+        //target: '_blank'
+    },
+    {
+        label: 'Лента коммитов',
+        to: 'https://github.com/nuxt/ui/releases',
+        //target: '_blank'
+    },
+    {
+        label: 'Объявления',
+        to: 'https://github.com/nuxt/ui/releases',
+        //target: '_blank'
+    },
+    {
+        label: 'Объявления',
+        to: 'https://github.com/nuxt/ui/releases',
+        //target: '_blank'
     }
 ])
 </script>
@@ -39,12 +54,14 @@ const items = computed(() => [
 
         <UNavigationMenu :items="items" />
 
+
         <template #right>
 
             <UButton color="neutral" variant="ghost" to="https://github.com/nuxt/ui" target="_blank"
-                icon="i-lucide:log-in" aria-label="Регистрация">Вход</UButton>
+                icon="i-material-symbols:login" aria-label="Регистрация">Вход</UButton>
             <UButton color="neutral" variant="ghost" to="https://github.com/nuxt/ui" target="_blank"
-                aria-label="Регистрация">Регистрация</UButton>
+                icon="i-material-symbols-how-to-reg" aria-label="Регистрация">Регистрация</UButton>
+
             <UColorModeButton />
             <UTooltip text="Open on GitHub" :kbds="['meta', 'G']">
                 <UButton color="neutral" variant="ghost" to="https://github.com/barmaley350/website" target="_blank"
