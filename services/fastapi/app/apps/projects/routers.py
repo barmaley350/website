@@ -4,7 +4,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 
-from app.apps.project import schemas, services
+from app.apps.projects import schemas, services
 from app.core.dependencies import get_project_service
 
 router = APIRouter(prefix="/api/v1", tags=["Projects"])

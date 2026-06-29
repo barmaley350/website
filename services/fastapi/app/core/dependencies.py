@@ -3,8 +3,8 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.apps.project.repositories import ProjectRepository
-from app.apps.project.services import ProjectService
+from app.apps.projects.repositories import ProjectRepository
+from app.apps.projects.services import ProjectService
 from app.core.core_dependencies.db_dependency import DBDependency
 
 db = DBDependency()

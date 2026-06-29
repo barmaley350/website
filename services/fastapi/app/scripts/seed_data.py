@@ -162,7 +162,7 @@ async def async_seed(
             num_skills = random.randint(1, len(skills))
             chosen_skills = random.sample(skills, num_skills)
             for skill in chosen_skills:
-                project_skill = ProjectSkill(user_id=project.id, skill_id=skill.id)
+                project_skill = ProjectSkill(project_id=project.id, skill_id=skill.id)
                 project_skills_objects.append(project_skill)
             process(len(project_skills_objects), "ProjectSkill")
         session.add_all(project_skills_objects)

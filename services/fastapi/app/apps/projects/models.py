@@ -40,7 +40,7 @@ class Project(Base):
     created_at: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
 
     project_skills: Mapped[list[ProjectSkill]] = relationship(back_populates="project")
-    skills = association_proxy("project_skills", "project_skills")
+    skills = association_proxy("project_skills", "skill")
 
     # Связи
     user: Mapped[User] = relationship("User", backref="projects")

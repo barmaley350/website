@@ -34,4 +34,4 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
     user_skills: Mapped[list[UserSkill]] = relationship(back_populates="user")
-    skills = association_proxy("user_skills", "user_skills")
+    skills = association_proxy("user_skills", "skill")

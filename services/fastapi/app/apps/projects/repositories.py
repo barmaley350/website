@@ -113,11 +113,11 @@ class ProjectRepository:
         # --- ПОДЗАПРОС ДЛЯ НАВЫКОВ ---
         project_skills_subq = (
             select(
-                models.ProjectSkill.user_id,
+                models.ProjectSkill.project_id,
                 func.array_agg(models.Skill.name).label("project_skills"),
             )
             .join(models.Skill, models.ProjectSkill.skill_id == models.Skill.id)
-            .group_by(models.ProjectSkill.user_id)
+            .group_by(models.ProjectSkill.project_id)
             .subquery()
         )
         stmt = (
@@ -138,7 +138,8 @@ class ProjectRepository:
             .outerjoin(comments_subq, models.Project.id == comments_subq.c.project_id)
             .outerjoin(user_skills_subq, models.User.id == user_skills_subq.c.user_id)
             .outerjoin(
-                project_skills_subq, models.User.id == project_skills_subq.c.user_id
+                project_skills_subq,
+                models.Project.id == project_skills_subq.c.project_id,
             )
             .order_by(models.Project.created_at.desc())
             .offset(offset)

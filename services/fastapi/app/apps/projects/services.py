@@ -2,7 +2,7 @@
 from typing import Any
 
 from app.apps import models
-from app.apps.project.repositories import ProjectRepository
+from app.apps.projects.repositories import ProjectRepository
 
 
 class ProjectService:
