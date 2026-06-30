@@ -8,9 +8,6 @@ const paginationPageNumber = page
 // const paginationPageNumber = ref(1)
 const route = useRoute();
 
-const cardTypes = ref(['List', 'Card'])
-const cardTypesValue = ref('List')
-
 const category_id = computed(() => {
     const raw = route.query.category_id
     return raw ? Number(raw) : undefined
@@ -40,11 +37,15 @@ const { data, status, error, pending } = await useFetch(`${apiUrl}projects/`, {
     key: computed(() => `projects-list-${paginationPageNumber.value}-${category_id}`)
 })
 
-const countProjects = computed(() => {
+const countFlats = computed(() => {
     if (status.value == "success") {
         return data.value["count"]
     }
 })
+
+function getRandomFlatNumber() {
+    return Math.floor(Math.random() * 53) + 1
+}
 
 const breadcrumbsData = computed(() => {
     // Здесь data.value уже точно существует (благодаря v-if)
@@ -66,26 +67,68 @@ watch(paginationPageNumber, () => {
     window.scrollTo({ top: 0, behavior: 'smooth' })
     // or instant: window.scrollTo(0, 0)
 })
-
+const cardType = true
 
 </script>
 <template>
     <div class="flex flex-col gap-3">
         <LayoutBreadcrumbs :breadcrumbsData :key="JSON.stringify(breadcrumbsData)"></LayoutBreadcrumbs>
-        <div class="flex flex-row justify-between items-center my-3">
-            <UPagination v-model:page="paginationPageNumber" :total="countProjects"
+        <div class="block my-3">
+            <UPagination v-model:page="paginationPageNumber" :total="countFlats"
                 :to="(page) => ({ query: { page, category_id: category_id } })" />
-            <div>
-                <USelect v-model="cardTypesValue" :items="cardTypes" />
-            </div>
         </div>
         <div class="grid grid-cols-12 gap-5">
             <div class="col-span-9">
-                <div class="flex flex-col gap-10" v-if="data && cardTypesValue == 'List'">
-                    <LayoutProjectList :data />
-                </div>
-                <div class="grid grid-cols-3 gap-4" v-else>
-                    <LayoutProjectCard :data />
+                <div class="flex flex-col gap-10" v-if="data && cardType">
+                    <LayoutCardHorizontal v-for="item in data.results" :key="JSON.stringify(item)">
+                        <template #title>
+                            <LayoutTitle class=" text-xl grow font-bold">
+                                <NuxtLink class="navbar-brand hover:underline underline-offset-4"
+                                    :to="'/projects/' + item.project.slug">{{ item.project.title }}</NuxtLink>
+                            </LayoutTitle>
+                            <LayoutBadges class="" v-if="item.comments_count">
+                                <Icon name="i-lucide:message-circle" /> {{ item.comments_count }}
+                            </LayoutBadges>
+                        </template>
+                        <template #header>
+                            <div class="flex flex-row justify-between text-sm gap-x-3">
+                                <div class="flex flex-row items-center gap-1">
+                                    <div class="font-bold text-gray-400">Добавлен</div>
+                                    <LayoutBadgesParams class="flex flex-row items-center gap-1 text-sm p-1">
+                                        <LayoutHumanDate :date="item.project.created_at" />
+                                    </LayoutBadgesParams>
+                                    <div class="font-bold text-gray-400">Последня активность</div>
+                                    <LayoutBadgesParams class="flex flex-row items-center gap-1 text-sm p-1">
+                                        <LayoutHumanDate :date="item.project.created_at" />
+                                    </LayoutBadgesParams>
+                                </div>
+                                <div class="flex flex-row items-center gap-1" v-if="item.team_users">
+                                    <!-- <LayoutBadgesParams class="text-sm">Команда</LayoutBadgesParams> -->
+                                    <div class="font-bold text-gray-400">Команда</div>
+                                    <UAvatarGroup :max="3">
+                                        <UAvatar :src="`http://localhost:1338/img2/${getRandomFlatNumber()}.jpg`"
+                                            :alt="user.name" v-for="user in item.team_users" :key="user.id" />
+                                    </UAvatarGroup>
+                                </div>
+                            </div>
+                        </template>
+                        <template #description>
+                            <div>{{ item.project.description.slice(0, 300) }}</div>
+                        </template>
+                        <template #footer>
+                            <div class="flex flex-row justify-between text-sm gap-x-3">
+                                <div class="flex flex-row items-center">
+                                    <div class="font-bold text-gray-400">Стек</div>
+                                    <LayoutBadgesParams v-for="skill in item.project_skills"
+                                        :key="JSON.stringify(skill)"
+                                        class="flex flex-row items-center gap-1 text-sm p-1">
+                                        {{ skill }}
+                                    </LayoutBadgesParams>
+                                </div>
+
+                            </div>
+                        </template>
+                    </LayoutCardHorizontal>
                 </div>
             </div>
             <div class="col-span-3">
@@ -94,7 +137,7 @@ watch(paginationPageNumber, () => {
                         <template #description>
                             <div class="flex flex-row justify-between">
                                 <div class="text-2xl">Всего объектов</div>
-                                <div class="text-2xl font-bold">{{ countProjects.toLocaleString('ru-RU') }}</div>
+                                <div class="text-2xl font-bold">{{ countFlats.toLocaleString('ru-RU') }}</div>
                             </div>
                         </template>
                     </LayoutCardHorizontal>
@@ -134,7 +177,7 @@ watch(paginationPageNumber, () => {
             </div>
         </div>
         <div class="block my-3">
-            <UPagination v-model:page="paginationPageNumber" :total="countProjects"
+            <UPagination v-model:page="paginationPageNumber" :total="countFlats"
                 :to="(page) => ({ query: { page, category_id: category_id } })" />
         </div>
     </div>

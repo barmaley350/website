@@ -33,7 +33,7 @@ const breadcrumbsData = computed(() => {
     ]
 })
 
-function getRandomFlatNumber() {
+function getRandomImage() {
     return Math.floor(Math.random() * 53) + 1
 }
 
@@ -62,14 +62,14 @@ function getRandomFlatNumber() {
                     <template #description>
                         <div class="flex flex-col gap-5">
 
-                            <div class="">
+                            <!-- <div class="">
                                 <div class="flex justify-start">
                                     <div class="w-full">
                                         <img class=" h-full w-full object-cover rounded-lg"
                                             :src="`http://localhost:1338/img2/${getRandomFlatNumber()}.jpg`">
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="">
 
                                 <div>{{ dataObject.project.description }}</div>
@@ -89,6 +89,11 @@ function getRandomFlatNumber() {
                         <!-- <ButtonsGreen class="bg-brand-600 ">
                             <Icon name="i-lucide:dollar-sign" /> {{ dataObject.object.price.toLocaleString('ru-RU') }}
                         </ButtonsGreen> -->
+                        <!-- {{ dataObject }} -->
+                        <UAvatarGroup :max="3">
+                            <UAvatar :src="`http://localhost:1338/img2/${getRandomImage()}.jpg`" :alt="user.name"
+                                v-for="user in dataObject.team_users" :key="user.id" />
+                        </UAvatarGroup>
                     </template>
                     <template #description>
 
@@ -141,16 +146,17 @@ function getRandomFlatNumber() {
 
     <div class="grid grid-cols-3 gap-5 mt-5">
         <LayoutCard v-for="relatedObject in dataRelatedObjects.results" :key="relatedObject.project.id">
-            <template #image>
+            <!-- <template #image>
                 <div class="w-full">
                     <img class=" h-64 w-full object-cover rounded-t-lg"
                         :src="`http://localhost:1338/img2/${getRandomFlatNumber()}.jpg`">
                 </div>
-            </template>
+            </template> -->
             <template #title>
                 <LayoutTitle class="text-2xl">
                     <NuxtLink class="navbar-brand hover:underline underline-offset-4"
-                        :to="'/projects/' + relatedObject.project.slug">{{ relatedObject.project.title.slice(0, 50) }}</NuxtLink>
+                        :to="'/projects/' + relatedObject.project.slug">{{ relatedObject.project.title.slice(0, 50) }}
+                    </NuxtLink>
                 </LayoutTitle>
             </template>
             <template #description>

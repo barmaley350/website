@@ -33,19 +33,8 @@ class ProjectService:
         """
         # # Количество комментариев
 
-        obj = await self.repo.get_project_by_id(project_slug)
-        rows = await self.repo.get_project(obj=obj)
-
-        # Похожие объекты
-        # similar_objects = await self.get_similar_objects(obj)
-
-        return {
-            "project": rows["Project"],
-            "user": rows["User"],
-            "geo": rows["Geo"],
-            "category": rows["Category"],
-            "comments_count": rows["comments_count"],
-        }
+        obj = await self.repo.get_project_by_slug(project_slug)
+        return await self.repo.get_project(obj=obj)
 
     async def get_projects(
         self,
@@ -76,27 +65,13 @@ class ProjectService:
             limit=limit,
         )
 
-        renamed_rows = [
-            {
-                "project": r["Project"],
-                "user": r["User"],
-                "geo": r["Geo"],
-                "category": r["Category"],
-                "comments_count": r["comments_count"],
-                "user_skills": r["user_skills"],
-                "project_skills": r["project_skills"],
-                "team_users": r["team_users"],
-            }
-            for r in rows
-        ]
-
         return {
             "count": total,
-            "results": renamed_rows,
+            "results": rows,
             "category_name": category_name,
             "category_id": filters.get("category_id") if filters else None,
         }
 
     async def get_project_by_id(self, project_slug: str) -> models.Project | None:
         """Получает объект по его Slug или None, если не найден."""
-        return await self.repo.get_project_by_id(project_slug)
+        return await self.repo.get_project_by_slug(project_slug)

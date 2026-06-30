@@ -149,13 +149,8 @@ class ProjectRepository:
         stmt = self.make_filters(filters=filters, stmt=stmt)
         rows = list((await self.session.execute(stmt)).mappings().all())
 
-        # ---------
-        # 2. Загружаем пользователей команды для всех проектов
-        if not rows:
-            return rows
-
-        result_rows = [dict(row) for row in rows]
-        project_ids = [row["Project"].id for row in rows]
+        result_rows = [{k.lower(): v for k, v in dict(row).items()} for row in rows]
+        project_ids = [row["project"].id for row in result_rows]
         team_stmt = (
             select(
                 models.ProjectTeam.project_id,
@@ -173,7 +168,7 @@ class ProjectRepository:
 
         # 3. Добавляем team_users в каждую строку
         for row_dict in result_rows:
-            project_id = row_dict["Project"].id
+            project_id = row_dict["project"].id
             users = team_users_map.get(project_id, [])
             row_dict["team_users"] = users  # теперь можно присваивать
 
@@ -183,7 +178,7 @@ class ProjectRepository:
         self,
         *,
         obj: models.Project,
-    ) -> RowMapping:
+    ):  # -> RowMapping:
         """Возвращает список объектов с пагинацией.
 
         Возвращает список объектов с пагинацией фильтром по категории,
@@ -195,6 +190,20 @@ class ProjectRepository:
             .where(models.Comment.project_id == models.Project.id)
             .scalar_subquery()
         )
+        user_skills_subq = (
+            select(func.array_agg(models.Skill.name))
+            .join(models.UserSkill, models.UserSkill.skill_id == models.Skill.id)
+            .where(models.UserSkill.user_id == models.Project.user_id)
+            .scalar_subquery()
+            .label("user_skills")
+        )
+        project_skills_subq = (
+            select(func.array_agg(models.Skill.name))
+            .join(models.ProjectSkill, models.ProjectSkill.skill_id == models.Skill.id)
+            .where(models.ProjectSkill.project_id == models.Project.id)
+            .scalar_subquery()
+            .label("project_skills")
+        )
 
         stmt = (
             select(
@@ -203,6 +212,8 @@ class ProjectRepository:
                 models.Geo,
                 models.Category,
                 func.coalesce(comments_count_subq, 0).label("comments_count"),
+                func.coalesce(user_skills_subq, []).label("user_skills"),
+                func.coalesce(project_skills_subq, []).label("project_skills"),
             )
             .where(models.Project.id == obj.id)
             .join(models.User, models.Project.user_id == models.User.id)
@@ -210,9 +221,25 @@ class ProjectRepository:
             .join(models.Category, models.Project.category_id == models.Category.id)
         )
 
-        return (await self.session.execute(stmt)).mappings().one()
+        row = (await self.session.execute(stmt)).mappings().one()
+        project = row["Project"]
 
-    async def get_project_by_id(
+        # Отдельный запрос для команды
+        team_stmt = (
+            select(models.User)
+            .join(models.ProjectTeam, models.ProjectTeam.user_id == models.User.id)
+            .where(models.ProjectTeam.project_id == project.id)
+        )
+        team_result = await self.session.execute(team_stmt)
+        team_users = team_result.scalars().all()
+
+        # Превращаем неизменяемый RowMapping в обычный dict
+        result_dict = {k.lower(): v for k, v in dict(row).items()}
+        result_dict["team_users"] = team_users
+
+        return result_dict
+
+    async def get_project_by_slug(
         self, project_slug: str
     ) -> models.Project | NoResultFound:
         stmt = select(models.Project).where(models.Project.slug == project_slug)
