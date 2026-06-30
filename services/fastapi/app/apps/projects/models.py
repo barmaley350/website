@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String
+from slugify import slugify
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, event
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -39,6 +40,9 @@ class Project(Base):
         Integer, ForeignKey("users.id"), nullable=False
     )
     created_at: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    slug: Mapped[str] = mapped_column(
+        String(120), unique=True, nullable=False, index=True
+    )
 
     skills: Mapped[list[ProjectSkill]] = relationship(back_populates="project")
     # skills = association_proxy("project_skills", "skill")
@@ -48,3 +52,12 @@ class Project(Base):
     user: Mapped[User] = relationship("User", backref="projects")
     category: Mapped[Category] = relationship("Category", backref="projects")
     geo: Mapped[Geo] = relationship("Geo", backref="projects")
+
+
+# TODO Подумать как сделать slug уникальным
+# Событие для автоматической генерации slug
+@event.listens_for(Project, "before_insert")
+@event.listens_for(Project, "before_update")
+def generate_slug(mapper, connection, target):
+    if not target.slug:  # если slug не задан вручную
+        target.slug = slugify(target.title)

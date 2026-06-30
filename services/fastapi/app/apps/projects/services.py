@@ -26,14 +26,14 @@ class ProjectService:
             "results": renamed_rows,
         }
 
-    async def get_project(self, project_id: int) -> dict[str, Any]:
-        """Собирает все данные для ответа на запрос GET /projects/{project_id}.
+    async def get_project(self, project_slug: str) -> dict[str, Any]:
+        """Собирает все данные для ответа на запрос GET /projects/{project_slug}.
 
         Возвращает словарь, который можно сразу отдать как JSON.
         """
         # # Количество комментариев
 
-        obj = await self.repo.get_project_by_id(project_id)
+        obj = await self.repo.get_project_by_id(project_slug)
         rows = await self.repo.get_project(obj=obj)
 
         # Похожие объекты
@@ -97,6 +97,6 @@ class ProjectService:
             "category_id": filters.get("category_id") if filters else None,
         }
 
-    async def get_project_by_id(self, project_id: int) -> models.Project | None:
-        """Получает объект по его ID или None, если не найден."""
-        return await self.repo.get_project_by_id(project_id)
+    async def get_project_by_id(self, project_slug: str) -> models.Project | None:
+        """Получает объект по его Slug или None, если не найден."""
+        return await self.repo.get_project_by_id(project_slug)

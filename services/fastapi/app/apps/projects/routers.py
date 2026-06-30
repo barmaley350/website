@@ -11,23 +11,23 @@ router = APIRouter(prefix="/api/v1", tags=["Projects"])
 
 
 @router.get(
-    "/projects/{project_id}/related/",
+    "/projects/{project_slug}/related/",
     response_model=schemas.RelatedProjectsResponse,
 )
 async def get_project_related(
-    project_id: int,
+    project_slug: str,
     service: Annotated[services.ProjectService, Depends(get_project_service)],
 ) -> dict:
     """Получить связанные projects."""
-    obj = await service.get_project_by_id(project_id)
+    obj = await service.get_project_by_id(project_slug)
     return await service.get_projects_related(obj)
 
 
 @router.get(
-    "/projects/{project_id}", response_model=schemas.ProjectResponseWithRelations
+    "/projects/{project_slug}", response_model=schemas.ProjectResponseWithRelations
 )
 async def get_project(
-    project_id: int,
+    project_slug: str,
     service: Annotated[services.ProjectService, Depends(get_project_service)],
 ) -> dict:
     """Получить project по его ID.
@@ -35,7 +35,7 @@ async def get_project(
     Возвращает полную информацию об project, включая связанные данные:
     пользователя, город, категорию, транзакцию и количество комментариев.
     """  # noqa: RUF002 TODO: fix later
-    return await service.get_project(project_id)
+    return await service.get_project(project_slug)
 
 
 @router.get("/projects/", response_model=schemas.PaginatedProjectsResponse)

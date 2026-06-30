@@ -85,7 +85,7 @@ class ProjectRepository:
         filters: dict[str, str],
         offset: int = 0,
         limit: int = 10,
-    ): #-> list[RowMapping]:
+    ):  # -> list[RowMapping]:
         """Возвращает список объектов с пагинацией.
 
         Возвращает список объектов с пагинацией фильтром по категории,
@@ -149,8 +149,8 @@ class ProjectRepository:
         stmt = self.make_filters(filters=filters, stmt=stmt)
         rows = list((await self.session.execute(stmt)).mappings().all())
 
-# ---------
-# 2. Загружаем пользователей команды для всех проектов
+        # ---------
+        # 2. Загружаем пользователей команды для всех проектов
         if not rows:
             return rows
 
@@ -178,7 +178,6 @@ class ProjectRepository:
             row_dict["team_users"] = users  # теперь можно присваивать
 
         return result_rows
-
 
     async def get_project(
         self,
@@ -214,9 +213,9 @@ class ProjectRepository:
         return (await self.session.execute(stmt)).mappings().one()
 
     async def get_project_by_id(
-        self, project_id: int
+        self, project_slug: str
     ) -> models.Project | NoResultFound:
-        stmt = select(models.Project).where(models.Project.id == project_id)
+        stmt = select(models.Project).where(models.Project.slug == project_slug)
         return (await self.session.execute(stmt)).scalar_one()
 
     def make_filters(

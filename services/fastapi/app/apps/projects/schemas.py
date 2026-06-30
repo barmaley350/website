@@ -25,6 +25,7 @@ class ProjectResponse(BaseModel):
     geo_id: int
     user_id: int
     created_at: datetime
+    slug: str | None = None
 
 
 class ProjectResponseWithRelations(BaseModel):
