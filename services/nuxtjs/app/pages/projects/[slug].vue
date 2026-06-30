@@ -5,7 +5,6 @@ const runtimeConfig = useRuntimeConfig()
 const route = useRoute();
 const slug = route.params.slug;
 
-// let url = "baseURL" in runtimeConfig ? runtimeConfig.baseURL + 'objects/' + id : window.location.origin + '/backend/api/v1/objects/' + id
 const apiUrl = process.server
     ? runtimeConfig.apiInternal      // на сервере — полный внутренний URL
     : runtimeConfig.public.apiBase   // на клиенте — относительный путь
@@ -28,13 +27,9 @@ const breadcrumbsData = computed(() => {
             icon: 'i-lucide-box',
         },
         {
-            to: `/projects/?category_id=${dataObject.value.project.category_id}`,
-            label: dataObject.value.category.name, separator: true, icon: "",
+            // to: `/projects/?category_id=${dataObject.value.project.category_id}`,
+            label: dataObject.value.project.title, separator: true, icon: "",
         },
-        // {
-        //     to: `/projects/`,
-        //     label: dataObject.value.transaction.title, separator: true, icon: "",
-        // }
     ]
 })
 

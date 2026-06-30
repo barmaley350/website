@@ -29,7 +29,10 @@ if (props.breadcrumbsData && props.breadcrumbsData.length > 0) {
         <div class="flex flex-row items-center" v-for="item in localData" :key="item.label">
             <Icon class="mx-1" name="i-lucide:arrow-right" v-if="item.separator" />
             <Icon class="mr-1" :name="item.icon" v-if="item.icon" />
-            <NuxtLink class="navbar-brand hover:underline underline-offset-4" :to=item.to>{{ item.label }}</NuxtLink>
+            <NuxtLink class="navbar-brand hover:underline underline-offset-4" :to=item.to v-if="item.to">
+                {{ item.label }}
+            </NuxtLink>
+            <span v-else>{{ item.label }}</span>
         </div>
     </div>
 </template>
