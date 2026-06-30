@@ -3,19 +3,19 @@
 const { statData, pending: pendingStat, error: errorStat } = useStatData()
 const runtimeConfig = useRuntimeConfig()
 const route = useRoute();
-const id = route.params.id;
+const slug = route.params.slug;
 
 // let url = "baseURL" in runtimeConfig ? runtimeConfig.baseURL + 'objects/' + id : window.location.origin + '/backend/api/v1/objects/' + id
 const apiUrl = process.server
     ? runtimeConfig.apiInternal      // на сервере — полный внутренний URL
     : runtimeConfig.public.apiBase   // на клиенте — относительный путь
 
-const { data: dataObject, status: statusObject, error: errorObject, pending: pendingObject } = await useFetch(`${apiUrl}projects/${id}`, {
-    key: `project-${id}`
+const { data: dataObject, status: statusObject, error: errorObject, pending: pendingObject } = await useFetch(`${apiUrl}projects/${slug}`, {
+    key: `project-${slug}`
 })
 
-const { data: dataRelatedObjects, status: statusRelatedObjects, error: errorRelatedObjects, pending: pendingRelatedObjects } = await useFetch(`${apiUrl}projects/${id}/related/`, {
-    key: `project-related-${id}`
+const { data: dataRelatedObjects, status: statusRelatedObjects, error: errorRelatedObjects, pending: pendingRelatedObjects } = await useFetch(`${apiUrl}projects/${slug}/related/`, {
+    key: `project-related-${slug}`
 })
 
 const breadcrumbsData = computed(() => {
@@ -153,7 +153,10 @@ function getRandomFlatNumber() {
                 </div>
             </template>
             <template #title>
-                <LayoutTitle class="text-2xl">{{ relatedObject.project.title.slice(0, 50) }}</LayoutTitle>
+                <LayoutTitle class="text-2xl">
+                    <NuxtLink class="navbar-brand hover:underline underline-offset-4"
+                        :to="'/projects/' + relatedObject.project.slug">{{ relatedObject.project.title.slice(0, 50) }}</NuxtLink>
+                </LayoutTitle>
             </template>
             <template #description>
                 {{ relatedObject.project.description.slice(0, 300) }}

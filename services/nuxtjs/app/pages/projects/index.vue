@@ -84,7 +84,7 @@ watch(paginationPageNumber, () => {
                         <template #title>
                             <LayoutTitle class=" text-xl grow font-bold">
                                 <NuxtLink class="navbar-brand hover:underline underline-offset-4"
-                                    :to="'/projects/' + item.project.id">{{ item.project.title }}</NuxtLink>
+                                    :to="'/projects/' + item.project.slug">{{ item.project.title }}</NuxtLink>
                             </LayoutTitle>
                             <LayoutBadges class="" v-if="item.comments_count">
                                 <Icon name="i-lucide:message-circle" /> {{ item.comments_count }}
@@ -119,7 +119,9 @@ watch(paginationPageNumber, () => {
                             <div class="flex flex-row justify-between text-sm gap-x-3">
                                 <div class="flex flex-row items-center">
                                     <div class="font-bold text-gray-400">Стек</div>
-                                    <LayoutBadgesParams v-for="skill in item.project_skills" :key="JSON.stringify(skill)" class="flex flex-row items-center gap-1 text-sm p-1">
+                                    <LayoutBadgesParams v-for="skill in item.project_skills"
+                                        :key="JSON.stringify(skill)"
+                                        class="flex flex-row items-center gap-1 text-sm p-1">
                                         {{ skill }}
                                     </LayoutBadgesParams>
                                 </div>
