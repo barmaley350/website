@@ -5,7 +5,7 @@ from app.core.settings import Base
 
 
 class Category(Base):
-    __tablename__ = "category"
+    __tablename__ = "categories"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String, unique=True, nullable=False)

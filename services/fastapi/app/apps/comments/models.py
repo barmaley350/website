@@ -18,7 +18,7 @@ class Comment(Base):
         Integer, ForeignKey("users.id"), nullable=False
     )
     project_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("project.id"), nullable=False
+        Integer, ForeignKey("projects.id"), nullable=False
     )
     created_at: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
 

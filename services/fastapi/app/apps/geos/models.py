@@ -5,7 +5,7 @@ from app.core.settings import Base
 
 
 class Geo(Base):
-    __tablename__ = "geo"
+    __tablename__ = "geos"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String, unique=True, nullable=False)

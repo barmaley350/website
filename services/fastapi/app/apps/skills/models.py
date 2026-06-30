@@ -13,7 +13,7 @@ from app.core.settings import Base
 
 
 class UserSkill(Base):
-    __tablename__ = "user_skills"
+    __tablename__ = "users_skills"
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), primary_key=True)
     skill_id: Mapped[int] = mapped_column(ForeignKey("skills.id"), primary_key=True)
 
@@ -23,8 +23,8 @@ class UserSkill(Base):
 
 
 class ProjectSkill(Base):
-    __tablename__ = "project_skills"
-    project_id: Mapped[int] = mapped_column(ForeignKey("project.id"), primary_key=True)
+    __tablename__ = "projects_skills"
+    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), primary_key=True)
     skill_id: Mapped[int] = mapped_column(ForeignKey("skills.id"), primary_key=True)
 
     project: Mapped[Project] = relationship(back_populates="skills")

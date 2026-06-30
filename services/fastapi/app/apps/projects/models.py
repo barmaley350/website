@@ -13,8 +13,8 @@ if TYPE_CHECKING:
 
 
 class ProjectTeam(Base):
-    __tablename__ = "project_teams"
-    project_id: Mapped[int] = mapped_column(ForeignKey("project.id"), primary_key=True)
+    __tablename__ = "projects_teams"
+    project_id: Mapped[int] = mapped_column(ForeignKey("projects.id"), primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), primary_key=True)
 
     # Связи к основным сущностям
@@ -24,7 +24,7 @@ class ProjectTeam(Base):
 
 # FIX description_full -> False
 class Project(Base):
-    __tablename__ = "project"
+    __tablename__ = "projects"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     title: Mapped[str] = mapped_column(String, unique=True, nullable=False)
@@ -32,9 +32,9 @@ class Project(Base):
     description_full: Mapped[str] = mapped_column(String, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     category_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("category.id"), nullable=False
+        Integer, ForeignKey("categories.id"), nullable=False
     )
-    geo_id: Mapped[int] = mapped_column(Integer, ForeignKey("geo.id"), nullable=False)
+    geo_id: Mapped[int] = mapped_column(Integer, ForeignKey("geos.id"), nullable=False)
     user_id: Mapped[int] = mapped_column(
         Integer, ForeignKey("users.id"), nullable=False
     )
