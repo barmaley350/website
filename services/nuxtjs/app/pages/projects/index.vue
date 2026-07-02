@@ -50,10 +50,11 @@ const breadcrumbsData = computed(() => {
     // Здесь data.value уже точно существует (благодаря v-if)
     const items = [
         {
-            to: "/projects",
+            // to: "/projects",
             label: "Проекты",
             separator: true,
             icon: 'i-lucide-box',
+            count: countProjects.value,
         },
     ]
     if (category_id.value !== undefined && data.value["category_name"]) {
@@ -71,7 +72,11 @@ watch(paginationPageNumber, () => {
 </script>
 <template>
     <div class="flex flex-col gap-3">
-        <LayoutBreadcrumbs :breadcrumbsData :key="JSON.stringify(breadcrumbsData)"></LayoutBreadcrumbs>
+        <div class="flex flex-row justify-between items-center mt-5">
+            <LayoutBreadcrumbs :breadcrumbsData :key="JSON.stringify(breadcrumbsData)"></LayoutBreadcrumbs>
+            <div class="block">Всего проектов {{ countProjects.toLocaleString('ru-RU') }}</div>
+        </div>
+
         <div class="flex flex-row justify-between items-center my-3">
             <UPagination v-model:page="paginationPageNumber" :total="countProjects"
                 :to="(page) => ({ query: { page, category_id: category_id } })" />

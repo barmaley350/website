@@ -25,14 +25,15 @@ if (props.breadcrumbsData && props.breadcrumbsData.length > 0) {
 </script>
 
 <template>
-    <div class="flex flex-row mt-5 align-center">
+    <div class="flex flex-row align-center">
         <div class="flex flex-row items-center" v-for="item in localData" :key="item.label">
             <Icon class="mx-1" name="i-lucide:arrow-right" v-if="item.separator" />
             <Icon class="mr-1" :name="item.icon" v-if="item.icon" />
             <NuxtLink class="navbar-brand hover:underline underline-offset-4" :to=item.to v-if="item.to">
                 {{ item.label }}
             </NuxtLink>
-            <span v-else>{{ item.label }}</span>
+            <span class="font-bold" v-else>{{ item.label }}</span>
+            <span v-if="item.count" class="ml-1">({{ item.count }})</span>
         </div>
     </div>
 </template>

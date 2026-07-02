@@ -9,11 +9,11 @@ const items = computed(() => [
         to: '/projects',
         active: route.path.startsWith('/projects')
     },
-    {
-        label: 'Основатели',
-        to: '/docs/components',
-        active: route.path.startsWith('/docs/components')
-    },
+    // {
+    //     label: 'Основатели',
+    //     to: '/docs/components',
+    //     active: route.path.startsWith('/docs/components')
+    // },
     {
         label: 'Комментарии',
         to: 'https://go.nuxt.com/figma-ui',
@@ -34,11 +34,6 @@ const items = computed(() => [
         to: 'https://github.com/nuxt/ui/releases',
         //target: '_blank'
     },
-    {
-        label: 'Объявления',
-        to: 'https://github.com/nuxt/ui/releases',
-        //target: '_blank'
-    }
 ])
 </script>
 

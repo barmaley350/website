@@ -40,7 +40,7 @@ function getRandomImage() {
 </script>
 
 <template>
-    <div class="flex flex-col gap-3">
+    <div class="flex flex-col gap-3 mt-5">
         <LayoutBreadcrumbs v-if="dataObject" :breadcrumbsData></LayoutBreadcrumbs>
     </div>
     <div class="grid grid-cols-12 gap-3 mt-5">
